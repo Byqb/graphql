@@ -20,7 +20,7 @@ body {
     padding: 20px;
 }
 
-h1, h2 {
+h1, h2, h3 {
     color: #2c3e50;
 }
 
@@ -83,5 +83,35 @@ header {
 svg {
     display: block;
     margin: 0 auto;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-size: 11px;
+}
+
+.line {
+    fill: none;
+    stroke: #3498db;
+    stroke-width: 2px;
+}
+
+.bar {
+    fill: #3498db;
+}
+
+.slice text {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.legend {
+    font-size: 12px;
 }
 

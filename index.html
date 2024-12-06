@@ -24,19 +24,30 @@
             </header>
             <main>
                 <section id="user-info"></section>
-                <section id="statistics">
-                    <h2>Statistics</h2>
-                    <div id="xp-progress-graph" class="graph-container"></div>
-                    <div id="project-ratio-graph" class="graph-container"></div>
+                <section id="graphs">
+                    <div id="xp-over-time" class="graph-container">
+                        <h2>XP Earned Over Time</h2>
+                    </div>
+                    <div id="xp-by-project" class="graph-container">
+                        <h2>XP Earned by Project</h2>
+                    </div>
+                    <div id="audit-ratio" class="graph-container">
+                        <h2>Audit Ratio</h2>
+                    </div>
+                    <div id="project-ratio" class="graph-container">
+                        <h2>Project Pass/Fail Ratio</h2>
+                    </div>
+                    <div id="piscine-stats" class="graph-container">
+                        <h2>Piscine Stats</h2>
+                        <div id="piscine-pass-fail"></div>
+                        <div id="piscine-attempts"></div>
+                    </div>
                 </section>
             </main>
         </div>
     </div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script type="text/babel" src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
 

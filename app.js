@@ -137,8 +137,7 @@ function createXPOverTimeGraph(transactions) {
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select("#xp-over-time")
-        .append("svg")
+    const svg = d3.select("#xp-over-time svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -166,9 +165,7 @@ function createXPOverTimeGraph(transactions) {
 
     const path = svg.append("path")
         .datum(xpData)
-        .attr("fill", "none")
-        .attr("stroke", "#3498db")
-        .attr("stroke-width", 2)
+        .attr("class", "line")
         .attr("d", line);
 
     const totalLength = path.node().getTotalLength();
@@ -180,6 +177,13 @@ function createXPOverTimeGraph(transactions) {
         .duration(2000)
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
+
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("XP Progress Over Time");
 }
 
 function createXPByProjectGraph(transactions) {
@@ -195,8 +199,7 @@ function createXPByProjectGraph(transactions) {
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select("#xp-by-project")
-        .append("svg")
+    const svg = d3.select("#xp-by-project svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -221,15 +224,22 @@ function createXPByProjectGraph(transactions) {
     svg.append("g")
         .call(d3.axisLeft(y));
 
-    svg.selectAll("bars")
+    svg.selectAll(".bar")
         .data(data)
         .enter()
         .append("rect")
+        .attr("class", "bar")
         .attr("x", d => x(d.project))
         .attr("y", d => y(d.xp))
         .attr("width", x.bandwidth())
-        .attr("height", d => height - y(d.xp))
-        .attr("fill", "#3498db");
+        .attr("height", d => height - y(d.xp));
+
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("XP Earned by Project");
 }
 
 function createAuditRatioGraph(audits) {
@@ -250,8 +260,7 @@ function createAuditRatioGraph(audits) {
         .domain(data.map(d => d.label))
         .range(["#2ecc71", "#e74c3c"]);
 
-    const svg = d3.select("#audit-ratio")
-        .append("svg")
+    const svg = d3.select("#audit-ratio svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -286,6 +295,13 @@ function createAuditRatioGraph(audits) {
         .attr("transform", d => `translate(${arc.centroid(d)})`)
         .attr("text-anchor", "middle")
         .text(d => `${d.data.label}: ${d.data.value}`);
+
+    svg.append("text")
+        .attr("x", 0)
+        .attr("y", -height / 2 + 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Audit Ratio");
 }
 
 function createProjectRatioGraph(progresses) {
@@ -308,8 +324,7 @@ function createProjectRatioGraph(progresses) {
         .domain(data.map(d => d.label))
         .range(["#2ecc71", "#e74c3c", "#f39c12"]);
 
-    const svg = d3.select("#project-ratio")
-        .append("svg")
+    const svg = d3.select("#project-ratio svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -344,6 +359,13 @@ function createProjectRatioGraph(progresses) {
         .attr("transform", d => `translate(${arc.centroid(d)})`)
         .attr("text-anchor", "middle")
         .text(d => `${d.data.label}: ${d.data.value}`);
+
+    svg.append("text")
+        .attr("x", 0)
+        .attr("y", -height / 2 + 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Project Status Distribution");
 }
 
 function createPiscineStats(results) {
@@ -361,8 +383,7 @@ function createPiscineStats(results) {
     const width = 300;
     const height = 200;
 
-    const svg = d3.select("#piscine-pass-fail")
-        .append("svg")
+    const svg = d3.select("#piscine-pass-fail svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -395,6 +416,13 @@ function createPiscineStats(results) {
         .attr("text-anchor", "middle")
         .attr("fill", "#333");
 
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Piscine Pass/Fail Ratio");
+
     // Attempts for each exercise
     const exerciseAttempts = piscineResults.reduce((acc, r) => {
         const exercise = r.object.name;
@@ -407,8 +435,7 @@ function createPiscineStats(results) {
     const attemptsWidth = 600;
     const attemptsHeight = 300;
 
-    const attemptsSvg = d3.select("#piscine-attempts")
-        .append("svg")
+    const attemptsSvg = d3.select("#piscine-attempts svg")
         .attr("width", attemptsWidth)
         .attr("height", attemptsHeight);
 
@@ -440,6 +467,13 @@ function createPiscineStats(results) {
         .attr("y", d => attemptsY(d.attempts) - 5)
         .attr("text-anchor", "middle")
         .attr("fill", "#333");
+
+    attemptsSvg.append("text")
+        .attr("x", attemptsWidth / 2)
+        .attr("y", 20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Piscine Exercise Attempts");
 }
 
 fetchUserData();

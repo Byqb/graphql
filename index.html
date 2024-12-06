@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="login-page" class="page">
+            <h1>Login</h1>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username or Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p id="error-message" class="error"></p>
+        </div>
+        <div id="profile-page" class="page hidden">
+            <h1>Profile</h1>
+            <button id="logout-button">Logout</button>
+            <div id="user-info"></div>
+            <div id="statistics">
+                <h2>Statistics</h2>
+                <div id="xp-graph"></div>
+                <div id="audit-ratio-graph"></div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
+

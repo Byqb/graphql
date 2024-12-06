@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GraphQL Profile</title>
+    <title>School Profile</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,17 +18,23 @@
             <p id="error-message" class="error"></p>
         </div>
         <div id="profile-page" class="page hidden">
-            <h1>Profile</h1>
-            <button id="logout-button">Logout</button>
-            <div id="user-info"></div>
-            <div id="statistics">
-                <h2>Statistics</h2>
-                <div id="xp-graph"></div>
-                <div id="audit-ratio-graph"></div>
-            </div>
+            <header>
+                <h1>Your School Profile</h1>
+                <button id="logout-button">Logout</button>
+            </header>
+            <main>
+                <section id="user-info"></section>
+                <section id="statistics">
+                    <h2>Statistics</h2>
+                    <div id="xp-progress-graph" class="graph-container"></div>
+                    <div id="project-ratio-graph" class="graph-container"></div>
+                </section>
+            </main>
         </div>
     </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
+
 

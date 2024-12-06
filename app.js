@@ -262,4 +262,3 @@ function createProjectRatioGraph(progresses) {
         .text("Project Status Distribution");
 }
 
-

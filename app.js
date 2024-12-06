@@ -1,3 +1,6 @@
+import { Audit } from './components/Audit';
+import * as ReactDOM from 'react-dom';
+
 const API_URL = 'https://learn.reboot01.com/api/graphql-engine/v1/graphql';
 const AUTH_URL = 'https://learn.reboot01.com/api/auth/signin';
 
@@ -49,33 +52,39 @@ function showLoginPage() {
 function showProfilePage() {
     loginPage.classList.add('hidden');
     profilePage.classList.remove('hidden');
+    ReactDOM.render(<Audit />, document.getElementById('audit-section'));
 }
 
 async function fetchUserData() {
     const query = `
-    {
-        user {
-            id
-            login
-            transactions(where: {type: {_eq: "xp"}}, order_by: {createdAt: asc}) {
-                id
-                amount
-                createdAt
-                path
-            }
-            progresses(where: {object: {type: {_eq: "project"}}}) {
-                id
-                isDone
-                grade
-                createdAt
-                object {
-                    id
-                    name
-                }
-            }
-        }
+{
+  user {
+    id
+    login
+    transactions(where: {type: {_eq: "xp"}}, order_by: {createdAt: asc}) {
+      id
+      amount
+      createdAt
+      path
     }
-    `;
+    progresses(where: {object: {type: {_eq: "project"}}}) {
+      id
+      isDone
+      grade
+      createdAt
+      object {
+        id
+        name
+      }
+    }
+    audits_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+`;
 
     try {
         const response = await fetch(API_URL, {
@@ -103,12 +112,14 @@ async function fetchUserData() {
 function displayUserInfo(user) {
     const totalXP = user.transactions.reduce((sum, t) => sum + t.amount, 0);
     const completedProjects = user.progresses.filter(p => p.isDone).length;
+    const totalAudits = user.audits_aggregate.aggregate.count;
 
     userInfo.innerHTML = `
         <h2>${user.login}</h2>
         <p><strong>User ID:</strong> ${user.id}</p>
         <p><strong>Total XP:</strong> ${totalXP.toLocaleString()} XP</p>
         <p><strong>Completed Projects:</strong> ${completedProjects}</p>
+        <p><strong>Total Audits:</strong> ${totalAudits}</p>
     `;
 }
 
@@ -261,4 +272,22 @@ function createProjectRatioGraph(progresses) {
         .style("font-size", "16px")
         .text("Project Status Distribution");
 }
+
+const profilePageContent = `
+  <header>
+    <h1>Your School Profile</h1>
+    <button id="logout-button">Logout</button>
+  </header>
+  <main>
+    <section id="user-info"></section>
+    <section id="audit-section"></section>
+    <section id="statistics">
+      <h2>Statistics</h2>
+      <div id="xp-progress-graph" class="graph-container"></div>
+      <div id="project-ratio-graph" class="graph-container"></div>
+    </section>
+  </main>
+`;
+
+document.getElementById('profile-page').innerHTML = profilePageContent;
 

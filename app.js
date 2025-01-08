@@ -196,6 +196,50 @@ function createXPOverTimeGraph(transactions) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .text("XP Progress Over Time");
+
+    // Add tooltips
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    svg.selectAll("circle")
+        .data(xpData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.date))
+        .attr("cy", d => y(d.xp))
+        .attr("r", 5)
+        .attr("fill", "#3498db")
+        .on("mouseover", function(event, d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltip.html(`Date: ${d.date.toLocaleDateString()}<br/>XP: ${d.xp}`)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+    // Add zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([1, 5])
+        .on("zoom", zoomed);
+
+    svg.call(zoom);
+
+    function zoomed(event) {
+        const newX = event.transform.rescaleX(x);
+        svg.select(".x-axis").call(d3.axisBottom(newX));
+        svg.select(".line")
+            .attr("d", d3.line()
+                .x(d => newX(d.date))
+                .y(d => y(d.xp))
+            );
+    }
 }
 
 function createXPByProjectGraph(transactions) {
@@ -378,6 +422,29 @@ function createProjectRatioGraph(progresses) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .text("Project Status Distribution");
+
+    // Add legend
+    const legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${width/2 + 10},${-height/2 + 50})`);
+
+    legend.selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", (d, i) => i * 20)
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("fill", d => color(d.label));
+
+    legend.selectAll("text")
+        .data(data)
+        .enter()
+        .append("text")
+        .attr("x", 15)
+        .attr("y", (d, i) => i * 20 + 9)
+        .text(d => d.label);
 }
 
 function createPiscineStats(results) {

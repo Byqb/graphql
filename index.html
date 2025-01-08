@@ -24,8 +24,9 @@
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
+        padding: 20px;
       }
 
       /* Enhanced Login Form */
@@ -92,8 +93,8 @@
       .profile-container {
         display: none;
         background: var(--card-background);
-        padding: 30px;
-        border-radius: 15px;
+        padding: 40px;
+        border-radius: 20px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(10px);
       }
@@ -134,17 +135,18 @@
       .graphs-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        margin-top: 30px;
+        gap: 40px;
+        margin-top: 40px;
       }
 
       .graph {
         background: rgba(255, 255, 255, 0.05);
-        padding: 20px;
-        border-radius: 15px;
+        padding: 30px;
+        border-radius: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
+        min-height: 500px;
       }
 
       .graph h3 {
@@ -176,15 +178,28 @@
       }
 
       /* Responsive Design */
+      @media (max-width: 1200px) {
+        .container {
+          max-width: 95%;
+        }
+      }
+
       @media (max-width: 768px) {
         .graphs-container {
           grid-template-columns: 1fr;
+        }
+
+        .graph {
+          min-height: 400px;
         }
       }
     </style>
   </head>
   <body>
-      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
     <div class="container">
       <!-- Login Form -->
       <div id="loginContainer" class="login-container">
@@ -210,11 +225,11 @@
         <div class="graphs-container">
           <div class="graph">
             <h3>XP Progress Over Time</h3>
-            <svg id="xpGraph" width="500" height="300"></svg>
+            <svg id="xpGraph" width="100%" height="500"></svg>
           </div>
           <div class="graph">
             <h3>Audit Ratio</h3>
-            <svg id="auditGraph" width="500" height="300"></svg>
+            <svg id="auditGraph" width="100%" height="400"></svg>
           </div>
         </div>
       </div>
@@ -281,7 +296,7 @@
 
         // Fetch user data
         const query = `
-         query {
+                query {
                     user {
                         id
                         login
@@ -289,13 +304,17 @@
                         lastName
                         totalUp
                         totalDown
-                        transactions(where: {type: {_eq: "xp"}, eventId: {_is_null: false}}, order_by: {createdAt: desc}, limit: 1) {
-                            amount
-                            createdAt
-                            path
+                        progresses(order_by: {updatedAt: desc}) {
                             object {
                                 name
                             }
+                            updatedAt
+                            grade
+                        }
+                        transactions(where: {type: {_eq: "xp"}, eventId: {_is_null: false}}, order_by: {createdAt: asc}) {
+                            amount
+                            createdAt
+                            path
                         }
                     }
                 }
@@ -313,7 +332,7 @@
                     <table class="user-info-table">
                         <tr>
                             <td><strong>ID:</strong></td>
-                            <td>${user.id}</td>
+                            <td>${user.login}</td>
                         </tr>
                         <tr>
                             <td><strong>Full Name:</strong></td>
@@ -329,8 +348,16 @@
                         </tr>
                        
                         <tr>
-                            <td><strong>Last Activity:</strong></td>
-                            <td>${user.transactions[0] ? `${user.transactions[0].object?.name || user.transactions[0].path} (${new Date(user.transactions[0].createdAt).toLocaleString()})` : 'No activity'}</td>
+                            <td><strong>Last Project:</strong></td>
+                            <td>${
+                              user.progresses[0]
+                                ? `${
+                                    user.progresses[0].object.name
+                                  } (${new Date(
+                                    user.progresses[0].updatedAt
+                                  ).toLocaleString()})`
+                                : 'No projects yet'
+                            }</td>
                         </tr>
                     
                         <p>Total XP: ${Math.round(user.totalUp / 1000)} kB</p>
@@ -349,90 +376,184 @@
       }
 
       function drawXPGraph(transactions) {
-        const svg = document.getElementById('xpGraph');
-        svg.innerHTML = '';
+        const svg = d3.select('#xpGraph');
+        svg.selectAll('*').remove();
 
-        const width = 500;
-        const height = 300;
-        const padding = 40;
+        const margin = {top: 50, right: 60, bottom: 90, left: 100};
+        const width = 1000 - margin.left - margin.right;
+        const height = 600 - margin.top - margin.bottom;
 
-        // Get XP data from transactions
-        const data = transactions.map(t => ({
-            date: new Date(t.createdAt),
-            xp: t.amount / 1000 // Convert to kB
-        }));
+        svg.attr("viewBox", `0 0 1000 600`)
+           .attr("preserveAspectRatio", "xMidYMid meet");
 
-        // Calculate domain for scales
-        const xMin = d3.min(data, d => d.date);
-        const xMax = d3.max(data, d => d.date);
-        const yMax = d3.max(data, d => d.xp);
+        const g = svg
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // Create scales
-        const xScale = d3.scaleTime()
-            .domain([xMin, xMax])
-            .range([padding, width - padding]);
+        // Process and sort data
+        const data = transactions
+            .map(t => ({
+                date: new Date(t.createdAt),
+                xp: t.amount / 1000,
+                path: t.path
+            }))
+            .sort((a, b) => a.date - b.date);
 
-        const yScale = d3.scaleLinear()
-            .domain([0, yMax])
-            .range([height - padding, padding]);
+        // Create scales with sorted dates
+        const x = d3.scaleTime()
+            .domain(d3.extent(data, d => d.date))
+            .range([0, width]);
 
-        // Create line generator
-        const line = d3.line()
-            .x(d => xScale(d.date))
-            .y(d => yScale(d.xp))
-            .curve(d3.curveMonotoneX);
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.xp) * 1.2])
+            .range([height, 0]);
 
-        // Draw line
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', line(data));
-        path.setAttribute('stroke', '#1a73e8');
-        path.setAttribute('stroke-width', '2');
-        path.setAttribute('fill', 'none');
-        svg.appendChild(path);
+        // Add gradient definition
+        const gradient = svg.append("defs")
+            .append("linearGradient")
+            .attr("id", "bar-gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
 
-        // Add axes
-        const xAxis = d3.axisBottom(xScale)
-            .ticks(5)
-            .tickFormat(d3.timeFormat('%b %d'));
-        
-        const yAxis = d3.axisLeft(yScale)
-            .ticks(5)
-            .tickFormat(d => `${d}kB`);
+        gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#64b5f6");
 
-        // Create axis groups
-        const xAxisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        xAxisGroup.setAttribute('transform', `translate(0, ${height - padding})`);
-        svg.appendChild(xAxisGroup);
+        gradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#1a73e8");
 
-        const yAxisGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        yAxisGroup.setAttribute('transform', `translate(${padding}, 0)`);
-        svg.appendChild(yAxisGroup);
+        // Add styled X axis with 4-month intervals
+        g.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x)
+                .tickFormat(d3.timeFormat("%b %Y"))
+                .ticks(d3.timeMonth.every(4)))  // Show every 4 months
+            .selectAll("text")
+            .style("fill", "#ffffff")
+            .style("font-size", "14px")
+            .style("font-weight", "bold")
+            .attr("transform", "rotate(-45)")
+            .attr("text-anchor", "end");
 
-        // Apply axes
-        d3.select(xAxisGroup).call(xAxis)
-            .selectAll('text')
-            .style('fill', '#ffffff');
-        
-        d3.select(yAxisGroup).call(yAxis)
-            .selectAll('text')
-            .style('fill', '#ffffff');
+        // Add styled Y axis
+        g.append("g")
+            .call(d3.axisLeft(y)
+                .tickFormat(d => `${Math.round(d)}kB`)
+                .ticks(10))
+            .selectAll("text")
+            .style("fill", "#ffffff")
+            .style("font-size", "14px")
+            .style("font-weight", "bold");
+
+        // Calculate bar width
+        const barWidth = width / data.length * 0.8;  // 80% of available space per bar
+
+        // Add bars with enhanced styling
+        const bars = g.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.date) - barWidth/2)  // Center the bar on the date
+            .attr("y", d => y(d.xp))
+            .attr("width", barWidth)
+            .attr("height", d => height - y(d.xp))
+            .attr("fill", "url(#bar-gradient)")
+            .attr("rx", 12)
+            .attr("ry", 12)
+            .style("filter", "drop-shadow(0px 4px 6px rgba(0,0,0,0.2))");
+
+        // Enhanced hover effect
+        bars.on("mouseover", function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("fill", "#64b5f6")
+                .style("filter", "drop-shadow(0px 8px 12px rgba(0,0,0,0.4))")
+                .attr("transform", "translateY(-5px)");
+
+            // Enhanced tooltip
+            g.append("text")
+                .attr("class", "tooltip")
+                .attr("x", x(d.date))
+                .attr("y", y(d.xp) - 20)
+                .attr("text-anchor", "middle")
+                .style("fill", "#ffffff")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .style("text-shadow", "2px 2px 4px rgba(0,0,0,0.3)")
+                .text(`${Math.round(d.xp)}kB - ${d.path}`);
+        })
+        .on("mouseout", function() {
+            d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("fill", "url(#bar-gradient)")
+                .style("filter", "drop-shadow(0px 4px 6px rgba(0,0,0,0.2))")
+                .attr("transform", "translateY(0)");
+            
+            g.selectAll(".tooltip").remove();
+        });
+
+        // Enhanced axis labels
+        g.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left + 30)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .style("fill", "#ffffff")
+            .style("font-size", "18px")
+            .style("font-weight", "bold")
+            .text("XP (kB)");
+
+        // Add X axis label
+        g.append("text")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 20)
+            .style("text-anchor", "middle")
+            .style("fill", "#ffffff")
+            .style("font-size", "18px")
+            .style("font-weight", "bold")
+            .text("Date");
 
         // Style axis lines
-        svg.querySelectorAll('.domain, .tick line')
-            .forEach(el => el.setAttribute('stroke', '#ffffff'));
+        svg.selectAll(".domain, .tick line")
+            .style("stroke", "#ffffff")
+            .style("stroke-width", "2px");
+
+        // Add subtle grid lines
+        g.selectAll("g.y-axis g.tick")
+            .append("line")
+            .attr("class", "grid-line")
+            .attr("x2", width)
+            .style("stroke", "rgba(255, 255, 255, 0.1)")
+            .style("stroke-width", "1px");
       }
 
       function drawAuditPieChart(up, down) {
-        const svg = document.getElementById('auditGraph');
-        svg.innerHTML = '';
+        const svg = d3.select('#auditGraph');
+        svg.selectAll('*').remove();
+
+        // Update SVG viewBox for better scaling
+        svg
+          .attr('viewBox', `0 0 500 400`)
+          .attr('preserveAspectRatio', 'xMidYMid meet');
+
+        const width = 500;
+        const height = 400;
+        const radius = Math.min(width, height) / 2.5;
 
         const total = up + down;
         const upRatio = up / total;
         const downRatio = down / total;
 
-        const centerX = 250;
-        const centerY = 150;
-        const radius = 100;
+        const centerX = width / 2;
+        const centerY = height / 2;
 
         // Convert ratio to angles
         const upAngle = upRatio * 360;
@@ -471,8 +592,8 @@
           return slice;
         };
 
-        svg.appendChild(createSlice(0, upAngle, '#4CAF50'));
-        svg.appendChild(createSlice(upAngle, 360, '#F44336'));
+        svg.node().appendChild(createSlice(0, upAngle, '#4CAF50'));
+        svg.node().appendChild(createSlice(upAngle, 360, '#F44336'));
 
         // Add legend
         addLegendItem(
@@ -509,7 +630,7 @@
         rect.setAttribute('width', 20);
         rect.setAttribute('height', 20);
         rect.setAttribute('fill', color);
-        svg.appendChild(rect);
+        svg.node().appendChild(rect);
 
         const label = document.createElementNS(
           'http://www.w3.org/2000/svg',
@@ -518,7 +639,7 @@
         label.setAttribute('x', x + 30);
         label.setAttribute('y', y + 5);
         label.textContent = text;
-        svg.appendChild(label);
+        svg.node().appendChild(label);
       }
     </script>
   </body>

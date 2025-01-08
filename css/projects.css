@@ -1,0 +1,109 @@
+.projects-container {
+    grid-area: projects;
+}
+
+.projects-container {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 50px;
+    border: 6px solid #171717;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 95%;
+}
+
+.projects-container>.project-title {
+    background-color: transparent;
+    color: rgb(228, 137, 0);
+}
+
+.projects-container>.project-names {
+    min-height: 85%;
+    max-height: 90%;
+    width: 90%;
+    overflow-y: scroll;
+    background-color: transparent;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+}
+
+.projects-container>.project-names::-webkit-scrollbar {
+    display: none;
+}
+
+.project-buttons {
+    background-color: rgb(12, 12, 12);
+    height: max-content;
+    margin: 3px 0px 0px 3px;
+    border-radius: 25px;
+}
+
+.project-buttons>h2 {
+    margin: 10px 0px 10px 0px;
+    background-color: transparent;
+    color: rgb(228, 137, 0);
+    text-align: start;
+}
+
+.project-buttons>.project-xp-grade-info {
+    display: flex;
+    background-color: transparent;
+}
+
+.project-buttons>.project-xp-grade-info>h3 {
+    margin: 0px 20px 0px 0px;
+    background-color: transparent;
+    color: rgba(169, 169, 169, 0.755);
+    text-align: start;
+}
+
+.project-buttons>.project-time-info {
+    background-color: transparent;
+}
+
+.project-buttons>.project-time-info>h3 {
+    background-color: transparent;
+    color: rgba(169, 169, 169, 0.509);
+    text-align: start;
+}
+
+.project-buttons>.project-skills-info {
+    background-color: transparent;
+    display: flex;
+    max-width: 100%;
+    overflow-x: scroll;
+    margin: 10px 0px 0px 0px;
+}
+
+/* width */
+.project-skills-info::-webkit-scrollbar {
+    height: 8px;
+}
+
+/* Track */
+.project-skills-info::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+/* Handle */
+.project-skills-info::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(228, 137, 0);
+}
+
+/* Handle on hover */
+.project-skills-info::-webkit-scrollbar-thumb:hover {
+    background: rgba(228, 137, 0);
+}
+
+.project-buttons>.project-skills-info>p {
+    background-color: transparent;
+    color: rgba(228, 137, 0, 0.7);
+    text-align: start;
+    min-width: max-content;
+    margin: 0px 10px 10px 0px;
+}

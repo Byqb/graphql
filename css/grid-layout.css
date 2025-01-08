@@ -1,0 +1,51 @@
+.homepage-container {
+    display: grid;
+    width: 100%;
+    height: 100vh;
+    grid-template-columns: 350px 1fr 1fr;
+    grid-template-rows: 80px 1fr 1fr 100px;
+    grid-gap: 1rem;
+    grid-template-areas:
+        "header header header"
+        "projects line-graphs line-graphs"
+        "projects skills other"
+        "projects skills other";
+}
+
+.header {
+    grid-area: header;
+}
+
+.footer {
+    grid-area: footer;
+    grid-row: 4 / 5;
+    grid-column: 1 / 4;
+}
+
+/* OTHER STYLES */
+
+body {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.header {
+    background-color: transparent;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    color: #ffffff;
+    border-radius: 50px;
+    border: 6px solid #171717;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.header>.header-title {
+    color: rgb(228, 137, 0);
+}

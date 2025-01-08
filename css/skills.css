@@ -1,0 +1,87 @@
+.skills-container {
+    grid-area: skills;
+}
+
+.skills-container {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 50px;
+    border: 6px solid #171717;
+    flex-direction: column;
+    text-align: center;
+    color: orange;
+    display: flex;
+    height: 90%;
+}
+
+.skills-title {
+    background-color: transparent;
+    margin-bottom: 10px;
+    color: rgb(228, 137, 0);
+}
+
+.svg-chart {
+    height: 90%;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.svg-pie-chart {
+    display: flex;
+    height: 60%;
+    flex-direction: column;
+    position: relative;
+}
+
+.svg-pie-chart>svg {
+    display: inline-block;
+    position: absolute;
+    align-self: center;
+    height: 100%;
+    background-color: transparent;
+}
+
+.svg-pie-chart-color {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    background-color: transparent;
+    overflow: auto;
+    overflow-x: hidden;
+    margin: 10px;
+    max-height: 30%;
+    align-items: flex-end;
+    width: 80%;
+    align-self: center;
+}
+
+.svg-pie-chart-color>p {
+    margin-right: 15px;
+    min-width: max-content;
+    background-color: transparent;
+}
+
+.svg-pie-chart-color::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+
+/* Track */
+.svg-pie-chart-color::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+
+}
+
+/* Handle */
+.svg-pie-chart-color::-webkit-scrollbar-thumb {
+    height: 10px;
+    border-radius: 10px;
+    background: rgba(228, 137, 0);
+}
+
+/* Handle on hover */
+.svg-pie-chart-color::-webkit-scrollbar-thumb:hover {
+    background: rgba(228, 137, 0, 0.794);
+}

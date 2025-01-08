@@ -1,60 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reboot01 Profile</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GraphQL API Frontend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #response {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+    button {
+      cursor: pointer;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-top: 10px;
+    }
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Login Section -->
-        <div class="login-container" id="loginSection">
-            <h1>Welcome to Reboot01</h1>
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <input type="text" id="username" placeholder="Username or Email" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password" placeholder="Password" required>
-                </div>
-                <button type="submit" class="login-btn">Login</button>
-                <div id="errorMessage" class="error-message"></div>
-            </form>
-        </div>
+  <h1>GraphQL API Frontend</h1>
 
-        <!-- Profile Section (Initially Hidden) -->
-        <div class="profile-container hidden" id="profileSection">
-            <header class="profile-header">
-                <h1>My Profile</h1>
-                <button id="logoutBtn" class="logout-btn">Logout</button>
-            </header>
+  <!-- Authentication Section -->
+  <h2>1. Authentication</h2>
+  <div>
+    <label for="username">Username:</label>
+    <input type="text" id="username" placeholder="Enter username">
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter password">
+  </div>
+  <button onclick="login()">Login</button>
+  <div id="auth-response">Login response will appear here...</div>
 
-            <div class="profile-content">
-                <!-- User Info Section -->
-                <section class="user-info">
-                    <div class="user-basic"></div>
-                    <div class="user-xp"></div>
-                    <div class="user-skills"></div>
-                </section>
+  <!-- GraphQL Query Section -->
+  <h2>2. GraphQL Query</h2>
+  <div>
+    <label for="graphql-query">GraphQL Query:</label>
+    <textarea id="graphql-query" rows="4" placeholder="Enter GraphQL query"></textarea>
+  </div>
+  <button onclick="sendGraphQLQuery()">Send Query</button>
+  <div id="response">Response will appear here...</div>
 
-                <!-- Statistics Section -->
-                <section class="statistics">
-                    <h2>Statistics</h2>
-                    <div class="graph-container">
-                        <div class="graph">
-                            <h3>XP Progress Over Time</h3>
-                            <svg id="xpGraph" width="100%" height="300"></svg>
-                        </div>
-                        <div class="graph">
-                            <h3>Audit Ratio</h3>
-                            <svg id="auditGraph" width="100%" height="300"></svg>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-    <script src="app.js"></script>
+  <script>
+    let jwtToken = null;
+
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const authResponse = await fetch("https://learn.reboot01.com/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const authData = await authResponse.json();
+      document.getElementById("auth-response").textContent = JSON.stringify(authData, null, 2);
+
+      if (authResponse.ok) {
+        jwtToken = authData.jwt; // Save JWT token
+        alert("Login successful! Token stored for GraphQL requests.");
+      } else {
+        alert("Login failed! Check your credentials.");
+      }
+    }
+
+    async function sendGraphQLQuery() {
+      const query = document.getElementById("graphql-query").value;
+
+      if (!jwtToken) {
+        alert("Please log in first to get a token.");
+        return;
+      }
+
+      const graphQLResponse = await fetch("https://learn.reboot01.com/api/graphql-engine/v1/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`, // Attach the JWT token
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      const graphQLData = await graphQLResponse.json();
+      document.getElementById("response").textContent = JSON.stringify(graphQLData, null, 2);
+    }
+  </script>
 </body>
 </html>

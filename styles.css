@@ -1,97 +1,144 @@
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
+/* Reset and Base Styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
 }
 
-#app {
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.page {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+/* Login Styles */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
-    color: #2c3e50;
-}
-
-form {
+.login-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-width: 300px;
-    margin: 0 auto;
+    gap: 20px;
 }
 
-input, button {
-    padding: 10px;
+.form-group input {
+    width: 100%;
+    padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-button {
-    background-color: #3498db;
-    color: #fff;
+.login-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: #ff4444;
+    text-align: center;
+}
+
+/* Profile Styles */
+.profile-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logout-btn {
+    background-color: #ff4444;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-button:hover {
-    background-color: #2980b9;
+.logout-btn:hover {
+    background-color: #cc0000;
 }
 
-.error {
-    color: #e74c3c;
-    text-align: center;
+/* Profile Content Styles */
+.profile-content {
+    display: grid;
+    gap: 30px;
 }
 
+.user-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.user-info > div {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Statistics Section */
+.statistics {
+    margin-top: 30px;
+}
+
+.graph-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.graph {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Utility Classes */
 .hidden {
     display: none;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-#user-info {
-    background-color: #ecf0f1;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.graph-container {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-svg {
-    display: block;
-    margin: 0 auto;
-}
-
-.loading {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-#loading-indicator {
-    text-align: center;
-    padding: 20px;
-    color: #3498db;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .graph-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-container {
+        padding: 15px;
+    }
 }

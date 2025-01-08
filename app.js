@@ -1,126 +1,110 @@
+// Constants
 const API_URL = 'https://learn.reboot01.com/api/graphql-engine/v1/graphql';
 const AUTH_URL = 'https://learn.reboot01.com/api/auth/signin';
 
-let token = null;
-
-const loginForm = document.getElementById('login-form');
-const errorMessage = document.getElementById('error-message');
-const loginPage = document.getElementById('login-page');
-const profilePage = document.getElementById('profile-page');
-const userInfo = document.getElementById('user-info');
-const logoutButton = document.getElementById('logout-button');
-
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
+// Authentication handling
+async function login(credentials) {
+    const base64Creds = btoa(`${credentials.username}:${credentials.password}`);
+    
     try {
         const response = await fetch(AUTH_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+                'Authorization': `Basic ${base64Creds}`
             }
         });
-
+        
         if (!response.ok) {
             throw new Error('Invalid credentials');
         }
-
+        
         const data = await response.json();
-        token = data.token;
-        showProfilePage();
-        fetchUserData();
+        localStorage.setItem('jwt', data.token);
+        return true;
     } catch (error) {
-        errorMessage.textContent = error.message;
+        console.error('Login failed:', error);
+        return false;
     }
-});
-
-logoutButton.addEventListener('click', () => {
-    token = null;
-    showLoginPage();
-});
-
-function showLoginPage() {
-    loginPage.classList.remove('hidden');
-    profilePage.classList.add('hidden');
 }
 
-function showProfilePage() {
-    loginPage.classList.add('hidden');
-    profilePage.classList.remove('hidden');
+function logout() {
+    localStorage.removeItem('jwt');
+    window.location.href = '/login.html';
 }
 
+// GraphQL queries
 async function fetchUserData() {
+    const jwt = localStorage.getItem('jwt');
+    
     const query = `
-    {
-      user {
-        id
-        login
-        transactions(where: {type: {_eq: "xp"}}, order_by: {createdAt: asc}) {
-          id
-          amount
-          createdAt
+        query {
+            user {
+                id
+                login
+                totalXp
+                skills {
+                    name
+                    level
+                }
+                transactions {
+                    type
+                    amount
+                    createdAt
+                }
+                // Add more fields as needed
+            }
         }
-      }
-    }
     `;
-
+    
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${jwt}`,
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ query })
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-
+        
         const data = await response.json();
-        displayUserInfo(data.data.user[0]);
-        createXPOverTimeGraph(data.data.user[0].transactions);
+        return data.data;
     } catch (error) {
-        errorMessage.textContent = 'Failed to load profile data. Please try again.';
+        console.error('Failed to fetch user data:', error);
+        return null;
     }
 }
 
-function displayUserInfo(user) {
-    userInfo.innerHTML = `
-        <h2>${user.login}</h2>
-        <p><strong>User ID:</strong> ${user.id}</p>
-        <p><strong>Total XP:</strong> ${user.transactions.reduce((sum, t) => sum + t.amount, 0)} XP</p>
-    `;
-}
-
+// SVG Graph Generation
 function createXPOverTimeGraph(transactions) {
-    const svg = d3.select("#xp-over-time svg");
-    const width = 600, height = 400;
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-
-    const data = transactions.map(t => ({ date: new Date(t.createdAt), xp: t.amount }));
-
-    const x = d3.scaleTime().domain(d3.extent(data, d => d.date)).range([0, width]);
-    const y = d3.scaleLinear().domain([0, d3.max(data, d => d.xp)]).range([height, 0]);
-
-    const line = d3.line()
-        .x(d => x(d.date))
-        .y(d => y(d.xp));
-
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
-
-    svg.append("g")
-        .call(d3.axisLeft(y));
-
-    svg.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 1.5)
-        .attr("d", line);
+    // Implementation for XP over time graph using SVG
 }
+
+function createAuditRatioGraph(auditData) {
+    // Implementation for audit ratio graph using SVG
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup login form handler
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const success = await login({ username, password });
+            if (success) {
+                window.location.href = '/profile.html';
+            } else {
+                // Show error message
+            }
+        });
+    }
+    
+    // Setup logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+});

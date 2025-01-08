@@ -3,39 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Profile</title>
+    <title>Reboot01 Profile</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <div id="login-page" class="page">
-            <h1>Login</h1>
-            <form id="login-form" aria-label="Login form">
-                <input type="text" id="username" placeholder="Username or Email" required aria-label="Username or Email">
-                <input type="password" id="password" placeholder="Password" required aria-label="Password">
-                <button type="submit">Login</button>
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-container" id="loginSection">
+            <h1>Welcome to Reboot01</h1>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <input type="text" id="username" placeholder="Username or Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div id="errorMessage" class="error-message"></div>
             </form>
-            <p id="error-message" class="error" role="alert"></p>
         </div>
-        <div id="profile-page" class="page hidden">
-            <header>
-                <h1>Your School Profile</h1>
-                <button id="logout-button">Logout</button>
+
+        <!-- Profile Section (Initially Hidden) -->
+        <div class="profile-container hidden" id="profileSection">
+            <header class="profile-header">
+                <h1>My Profile</h1>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
             </header>
-            <main>
-                <section id="user-info"></section>
-                <section id="graphs">
-                    <div id="xp-over-time" class="graph-container">
-                        <h2>XP Earned Over Time</h2>
-                        <svg width="600" height="400"></svg>
+
+            <div class="profile-content">
+                <!-- User Info Section -->
+                <section class="user-info">
+                    <div class="user-basic"></div>
+                    <div class="user-xp"></div>
+                    <div class="user-skills"></div>
+                </section>
+
+                <!-- Statistics Section -->
+                <section class="statistics">
+                    <h2>Statistics</h2>
+                    <div class="graph-container">
+                        <div class="graph">
+                            <h3>XP Progress Over Time</h3>
+                            <svg id="xpGraph" width="100%" height="300"></svg>
+                        </div>
+                        <div class="graph">
+                            <h3>Audit Ratio</h3>
+                            <svg id="auditGraph" width="100%" height="300"></svg>
+                        </div>
                     </div>
                 </section>
-            </main>
-            <div id="loading-indicator" class="hidden">Loading...</div>
+            </div>
         </div>
     </div>
-    <script src="https://d3.js.org/d3.v7.min.js"></script>
     <script src="app.js"></script>
-    <h3>Lol</h3>
 </body>
 </html>

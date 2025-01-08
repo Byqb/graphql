@@ -102,6 +102,19 @@
             user {
               id
               login
+              firstName
+              lastName
+              transactions(where: { type: { _eq: "xp" }}) {
+                amount
+              }
+              progress {
+                id
+                grade
+              }
+              result {
+                id
+                grade
+              }
             }
           }`
         }),
@@ -116,12 +129,29 @@
       }
 
       const user = data.data.user;
+      const transactions = user.transactions;
+      const progress = user.progress;
+      const result = user.result;
+
+      // Calculate XP
+      const totalXP = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+
+      // Calculate audit ratio (using grades from progress and result)
+      const totalGrades = progress.length + result.length;
+      const passedGrades = [...progress, ...result].filter(entry => entry.grade > 0).length;
+      const auditRatio = (passedGrades / totalGrades) * 100;
+
+      // Calculate number of completed projects
+      const completedProjects = result.filter(r => r.grade > 0).length;
+
       document.getElementById("user-info").innerHTML = `
         <p><strong>User ID:</strong> ${user.id}</p>
+        <p><strong>Full Name:</strong> ${user.firstName} ${user.lastName}</p>
         <p><strong>Login:</strong> ${user.login}</p>
+        <p><strong>Total XP:</strong> ${totalXP}</p>
+        <p><strong>Audit Ratio:</strong> ${auditRatio.toFixed(2)}%</p>
+        <p><strong>Completed Projects:</strong> ${completedProjects}</p>
       `;
-
-      // You can extend this to display more data like XP, grades, etc.
 
       // Show profile container
       document.getElementById("login-container").style.display = "none";

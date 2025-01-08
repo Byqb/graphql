@@ -159,25 +159,35 @@
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    // Send login request to get JWT
+    // Base64 encode the credentials for Basic Authentication
+    const base64Credentials = btoa(username + ":" + password); // Encode credentials
+
     const response = await fetch("https://learn.reboot01.com/api/auth/signin", {
       method: "POST",
       headers: {
+        "Authorization": "Basic " + base64Credentials,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
     });
 
     const data = await response.json();
-    if (response.ok) {
-      // Save JWT token and redirect to profile page
-      localStorage.setItem("jwt", data.jwt);
-      window.location.reload(); // Reload page to show profile
-    } else {
-      // Show error message if credentials are invalid
-      document.getElementById("error-message").textContent = "Invalid credentials. Please try again.";
-    }
-  });
+
+if (response.ok) {
+  // Successful login, save JWT token and redirect to profile page
+  localStorage.setItem("jwt", data.jwt);
+  window.location.reload(); // Reload page to show profile
+} else {
+  // If credentials are invalid, show a specific error message
+  let errorMessage = "Invalid credentials. Please try again.";
+  
+  // Check for more specific error details in the response (if available)
+  if (data.error) {
+    errorMessage = data.error.message || errorMessage;
+  }
+
+  document.getElementById("error-message").textContent = errorMessage;
+}
+});
 
   // Handle Logout
   document.getElementById("logout-btn").addEventListener("click", () => {

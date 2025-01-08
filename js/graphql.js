@@ -2,9 +2,9 @@ import { createHomepage } from "./ui/homepage-layout.js"
 import { createLoader } from "./ui/loader.js"
 import { createSignInForm } from "./ui/signIn.js"
 
-const Url = "https://learn.01founders.co/api/graphql-engine/v1/graphql"
-export let ID = 546
-export let Username = "Jasonasante"
+const Url = "https://learn.reboot01.com/api/graphql-engine/v1/graphql"
+export let ID = 1185
+export let Username = "yrahma"
 let token
 
 
@@ -128,7 +128,7 @@ export function getTransactionData(URL) {
 
 //gets the user's level over each project period
 function getLevels() {
-    fetch("https://learn.01founders.co/api/graphql-engine/v1/graphql", {
+    fetch("https://learn.reboot01.com/api/graphql-engine/v1/graphql", {
         method: "POST",
         headers: {
             "Authorization": 'Bearer ' + token,
@@ -186,7 +186,7 @@ function getLevels() {
 
 //returns an object contain the corresponding amount of each skill
 function getTotalSkills() {
-    fetch("https://learn.01founders.co/api/graphql-engine/v1/graphql", {
+    fetch("https://learn.reboot01.com/api/graphql-engine/v1/graphql", {
         method: "POST",
         headers: {
             "Authorization": 'Bearer ' + token,
@@ -340,7 +340,7 @@ function getTotalXpAndGrades(resultArr) {
 }
 
 function otherUsersGQL(encodedCredentials) {
-    fetch("https://learn.01founders.co/api/auth/signin", {
+    fetch("https://learn.reboot01.com/api/auth/signin", {
         method: "POST",
         headers: {
             'Authorization': `Basic ${encodedCredentials}`,

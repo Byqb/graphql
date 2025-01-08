@@ -4,7 +4,7 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
-    background-color: #413939;
+    background-color: #f4f4f4;
 }
 
 #app {
@@ -20,7 +20,7 @@ body {
     padding: 20px;
 }
 
-h1, h2, h3 {
+h1, h2 {
     color: #2c3e50;
 }
 
@@ -85,36 +85,6 @@ svg {
     margin: 0 auto;
 }
 
-.axis path,
-.axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-
-.axis text {
-    font-size: 11px;
-}
-
-.line {
-    fill: none;
-    stroke: #3498db;
-    stroke-width: 2px;
-}
-
-.bar {
-    fill: #3498db;
-}
-
-.slice text {
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.legend {
-    font-size: 12px;
-}
-
 .loading {
     opacity: 0.5;
     pointer-events: none;
@@ -125,28 +95,3 @@ svg {
     padding: 20px;
     color: #3498db;
 }
-
-/* Improve focus states for accessibility */
-input:focus, button:focus {
-    outline: 2px solid #3498db;
-    outline-offset: 2px;
-}
-
-/* Add responsive breakpoints */
-@media (max-width: 768px) {
-    .graph-container svg {
-        width: 100%;
-        height: auto;
-    }
-}
-
-.tooltip {
-    position: absolute;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    border-radius: 4px;
-    pointer-events: none;
-    font-size: 12px;
-}
-

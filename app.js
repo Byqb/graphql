@@ -132,6 +132,7 @@ function createXPOverTimeGraph(transactions) {
     path.setAttribute('fill', 'none');
     svg.appendChild(path);
 
+    //
     // Add axes
     // ... axis implementation
 }

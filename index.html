@@ -3,49 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login & Profile - GraphQL</title>
+  <title>Profile with GraphQL</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+    }
+    header {
+      background-color: #0044cc;
+      color: white;
+      padding: 15px;
+      text-align: center;
     }
     h1 {
-      color: #333;
+      margin: 0;
     }
-    .section {
-      margin: 20px 0;
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
     }
-    input, button {
+    #login-container {
+      width: 300px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    #login-container input {
+      width: 100%;
       padding: 10px;
       margin: 10px 0;
-      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-    button {
-      background-color: #007bff;
+    #login-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
       color: white;
       border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
-    #logout-btn {
-      background-color: #f44336;
+    #login-container button:hover {
+      background-color: #218838;
     }
-    svg {
-      margin-top: 20px;
+    #error-message {
+      color: red;
+      margin-top: 10px;
+    }
+    #profile-container {
+      display: none;
+      width: 80%;
+      max-width: 600px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    #profile-container h2 {
+      margin-bottom: 20px;
+    }
+    #profile-container .user-info {
+      margin-bottom: 20px;
+    }
+    .logout-btn {
+      background-color: #dc3545;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #c82333;
     }
     #graphs {
       display: flex;
       justify-content: space-around;
+      margin-top: 30px;
     }
-    #error-message {
-      color: red;
+    svg {
+      width: 150px;
+      height: 150px;
+      margin: 10px;
+    }
+    .graph {
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
+<header>
+  <h1>GraphQL Profile</h1>
+</header>
+
+<div class="container">
   <!-- Login Form -->
   <div id="login-container">
-    <h1>Login</h1>
+    <h2>Login</h2>
     <form id="login-form">
       <input type="text" id="username" placeholder="Username or Email" required>
       <input type="password" id="password" placeholder="Password" required>
@@ -55,126 +118,131 @@
   </div>
 
   <!-- Profile Page -->
-  <div id="profile-container" style="display:none;">
-    <h1>Your Profile</h1>
-    <button id="logout-btn">Logout</button>
-    
-    <div id="user-info" class="section">
-      <h2>User Information</h2>
-      <p id="user-name"></p>
-      <p id="user-xp"></p>
-      <p id="user-skills"></p>
+  <div id="profile-container">
+    <h2>Welcome, <span id="user-name"></span></h2>
+    <div class="user-info">
+      <p><strong>XP:</strong> <span id="user-xp"></span></p>
+      <p><strong>Skills:</strong> <span id="user-skills"></span></p>
     </div>
+    <button class="logout-btn" id="logout-btn">Logout</button>
 
     <div id="graphs">
-      <svg id="graph1" width="200" height="200"></svg>
-      <svg id="graph2" width="200" height="200"></svg>
+      <div class="graph">
+        <h3>XP Progress</h3>
+        <svg id="xp-graph"></svg>
+      </div>
+      <div class="graph">
+        <h3>Project Completion</h3>
+        <svg id="project-graph"></svg>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // Check if the user is already logged in
-    const jwtToken = localStorage.getItem("jwt");
+<script>
+  // Check if the user is already logged in
+  const jwtToken = localStorage.getItem("jwt");
 
-    if (jwtToken) {
-      document.getElementById("login-container").style.display = "none";
-      document.getElementById("profile-container").style.display = "block";
-      fetchUserProfile(); // Fetch user data once logged in
+  if (jwtToken) {
+    document.getElementById("login-container").style.display = "none";
+    document.getElementById("profile-container").style.display = "block";
+    fetchUserProfile(); // Fetch user data once logged in
+  } else {
+    document.getElementById("login-container").style.display = "block";
+    document.getElementById("profile-container").style.display = "none";
+  }
+
+  // Handle Login Form Submission
+  document.getElementById("login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    // Send login request to get JWT
+    const response = await fetch("https://learn.reboot01.com/api/auth/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      // Save JWT token and redirect to profile page
+      localStorage.setItem("jwt", data.jwt);
+      window.location.reload(); // Reload page to show profile
     } else {
-      document.getElementById("login-container").style.display = "block";
-      document.getElementById("profile-container").style.display = "none";
+      // Show error message if credentials are invalid
+      document.getElementById("error-message").textContent = "Invalid credentials. Please try again.";
     }
+  });
 
-    // Handle Login Form Submission
-    document.getElementById("login-form").addEventListener("submit", async (event) => {
-      event.preventDefault();
+  // Handle Logout
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("jwt");
+    window.location.reload(); // Reload page to show login page
+  });
 
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      // Send login request to get JWT
-      const response = await fetch("https://learn.reboot01.com/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        // Save JWT token and redirect to profile page
-        localStorage.setItem("jwt", data.jwt);
-        window.location.reload(); // Reload page to show profile
-      } else {
-        // Show error message if credentials are invalid
-        document.getElementById("error-message").textContent = "Invalid credentials. Please try again.";
-      }
-    });
-
-    // Handle Logout
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("jwt");
-      window.location.reload(); // Reload page to show login page
-    });
-
-    // Fetch User Profile Data (GraphQL)
-    async function fetchUserProfile() {
-      const query = `
-        query {
-          user {
-            username
-            xp
-            skills {
-              name
-            }
+  // Fetch User Profile Data (GraphQL)
+  async function fetchUserProfile() {
+    const query = `
+      query {
+        user {
+          login
+          xp
+          skills {
+            name
           }
         }
-      `;
+      }
+    `;
 
-      const response = await fetch("https://learn.reboot01.com/api/graphql-engine/v1/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({ query }),
-      });
+    const response = await fetch("https://learn.reboot01.com/api/graphql-engine/v1/graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ query }),
+    });
 
-      const data = await response.json();
-      const user = data.data.user;
+    const data = await response.json();
+    const user = data.data.user;
 
-      // Display User Information
-      document.getElementById("user-name").textContent = `Username: ${user.username}`;
-      document.getElementById("user-xp").textContent = `XP: ${user.xp}`;
-      document.getElementById("user-skills").textContent = `Skills: ${user.skills.map(skill => skill.name).join(", ")}`;
+    // Display User Information
+    document.getElementById("user-name").textContent = user.login;
+    document.getElementById("user-xp").textContent = user.xp;
+    document.getElementById("user-skills").textContent = user.skills.map(skill => skill.name).join(", ");
 
-      // Generate Graphs
-      generateGraphs(user.xp);
-    }
+    // Generate Graphs
+    generateGraphs(user.xp);
+  }
 
-    // Generate SVG Graphs
-    function generateGraphs(xp) {
-      const graph1 = document.getElementById("graph1");
-      const graph2 = document.getElementById("graph2");
+  // Generate SVG Graphs
+  function generateGraphs(xp) {
+    const xpGraph = document.getElementById("xp-graph");
+    const projectGraph = document.getElementById("project-graph");
 
-      // Graph 1: Circle representing XP
-      const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle1.setAttribute("cx", "100");
-      circle1.setAttribute("cy", "100");
-      circle1.setAttribute("r", xp / 10); // Radius based on XP
-      circle1.setAttribute("fill", "lightblue");
-      graph1.appendChild(circle1);
+    // Graph 1: Circle representing XP (XP Progress)
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "75");
+    circle.setAttribute("cy", "75");
+    circle.setAttribute("r", xp / 10); // Radius based on XP
+    circle.setAttribute("fill", "lightblue");
+    xpGraph.appendChild(circle);
 
-      // Graph 2: Progress bar representing XP
-      const rect2 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      rect2.setAttribute("x", "10");
-      rect2.setAttribute("y", "90");
-      rect2.setAttribute("width", xp / 2); // Width based on XP
-      rect2.setAttribute("height", "20");
-      rect2.setAttribute("fill", "green");
-      graph2.appendChild(rect2);
-    }
-  </script>
+    // Graph 2: Bar representing Project Completion
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", "20");
+    rect.setAttribute("y", "100");
+    rect.setAttribute("width", xp / 5); // Width based on XP
+    rect.setAttribute("height", "20");
+    rect.setAttribute("fill", "green");
+    projectGraph.appendChild(rect);
+  }
+</script>
+
 </body>
 </html>

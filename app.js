@@ -52,6 +52,10 @@ function showProfilePage() {
 }
 
 async function fetchUserData() {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    loadingIndicator.classList.remove('hidden');
+    profilePage.classList.add('loading');
+
     const query = `
     {
       user {
@@ -104,6 +108,10 @@ async function fetchUserData() {
         }
 
         const data = await response.json();
+        if (data.errors) {
+            throw new Error(data.errors[0].message);
+        }
+        
         displayUserInfo(data.data.user[0]);
         createXPOverTimeGraph(data.data.user[0].transactions);
         createXPByProjectGraph(data.data.user[0].transactions);
@@ -112,6 +120,10 @@ async function fetchUserData() {
         createPiscineStats(data.data.user[0].results);
     } catch (error) {
         console.error('Error fetching user data:', error);
+        errorMessage.textContent = 'Failed to load profile data. Please try again.';
+    } finally {
+        loadingIndicator.classList.add('hidden');
+        profilePage.classList.remove('loading');
     }
 }
 
@@ -474,6 +486,17 @@ function createPiscineStats(results) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .text("Piscine Exercise Attempts");
+}
+
+// Add error boundaries for graph creation
+function createGraphWithErrorHandling(createFn, data, containerId) {
+    try {
+        createFn(data);
+    } catch (error) {
+        console.error(`Error creating graph in ${containerId}:`, error);
+        const container = document.getElementById(containerId);
+        container.innerHTML = '<p class="error">Failed to load graph</p>';
+    }
 }
 
 fetchUserData();

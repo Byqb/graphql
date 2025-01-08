@@ -10,12 +10,12 @@
     <div id="app">
         <div id="login-page" class="page">
             <h1>Login</h1>
-            <form id="login-form">
-                <input type="text" id="username" placeholder="Username or Email" required>
-                <input type="password" id="password" placeholder="Password" required>
+            <form id="login-form" aria-label="Login form">
+                <input type="text" id="username" placeholder="Username or Email" required aria-label="Username or Email">
+                <input type="password" id="password" placeholder="Password" required aria-label="Password">
                 <button type="submit">Login</button>
             </form>
-            <p id="error-message" class="error"></p>
+            <p id="error-message" class="error" role="alert"></p>
         </div>
         <div id="profile-page" class="page hidden">
             <header>
@@ -54,6 +54,7 @@
                     </div>
                 </section>
             </main>
+            <div id="loading-indicator" class="hidden">Loading...</div>
         </div>
     </div>
     <script src="https://d3.js.org/d3.v7.min.js"></script>

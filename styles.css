@@ -4,7 +4,7 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #413939;
 }
 
 #app {
@@ -113,5 +113,30 @@ svg {
 
 .legend {
     font-size: 12px;
+}
+
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#loading-indicator {
+    text-align: center;
+    padding: 20px;
+    color: #3498db;
+}
+
+/* Improve focus states for accessibility */
+input:focus, button:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Add responsive breakpoints */
+@media (max-width: 768px) {
+    .graph-container svg {
+        width: 100%;
+        height: auto;
+    }
 }
 

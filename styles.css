@@ -1,0 +1,397 @@
+/* Updated and new styles */
+:root {
+    --primary-color: #ff6f61; /* Coral Pink */
+    --secondary-color: #ffcc00; /* Bright Yellow */
+    --background-color: #1a1a2e; /* Dark Navy */
+    --text-color: #ffffff; /* White */
+    --card-background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+  }
+  
+  body {
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('d.webp') no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Enhanced Login Form */
+  .login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 40px;
+    background: var(--card-background);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 3px solid var(--secondary-color);
+    border-style: dashed;
+  }
+  
+  .login-container h2 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-size: 2em;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px rgba(26, 115, 232, 0.5);
+    border: 2px dashed var(--secondary-color);
+    transform: scale(1.02);
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button::after {
+    content: '→';
+    position: absolute;
+    right: -20px;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  button:hover::after {
+    right: 15px;
+    opacity: 1;
+  }
+  
+  button:hover {
+    background: #1557b0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+  }
+  
+  /* Profile Container Styling */
+  .profile-container {
+    display: none;
+    background: var(--card-background);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    position: relative;
+  }
+  
+  /* Pixel Art Decorations - Adjusted position and size */
+  .profile-container::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(
+        45deg,
+        transparent 33%,
+        var(--secondary-color) 33%,
+        var(--secondary-color) 66%,
+        transparent 66%
+      ),
+      linear-gradient(
+        -45deg,
+        transparent 33%,
+        var(--secondary-color) 33%,
+        var(--secondary-color) 66%,
+        transparent 66%
+      );
+    background-size: 10px 10px;
+    animation: pixelFloat 2s ease-in-out infinite;
+  }
+  
+  /* Cute Star Animation - Adjusted position and timing */
+  .stats-card::after {
+    content: '★';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #ffd700;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+  
+  /* Cute Loading Animation - Better positioning */
+  .graph::before {
+    content: '(づ｡◕‿‿◕｡)づ';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    opacity: 0;
+    color: var(--secondary-color);
+    animation: fadeInOut 3s ease-in-out;
+    pointer-events: none;
+  }
+  
+  /* Refined Animation Keyframes */
+  @keyframes pixelFloat {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(5deg);
+    }
+  }
+  
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+  
+  @keyframes heartAppear {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes heartBeat {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.8;
+    }
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
+  
+  /* Welcome Message Animation */
+  .welcome-message {
+    font-size: 2.5em;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(
+      90deg,
+      #ff0000,
+      #ff7f00,
+      #ffff00,
+      #00ff00,
+      #0000ff,
+      #4b0082,
+      #8f00ff
+    );
+    background-size: 200% auto;
+    color: #fff;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 6s linear infinite;
+  }
+  
+  /* Pixel Heart Beat Animation - Improved spacing and timing */
+  @keyframes rainbow {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+  
+  .graphs-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  
+  .graph {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 500px;
+    position: relative;
+  }
+  
+  .graph h3 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .error {
+    color: #ff4444;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Stats Cards */
+  .stats-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+    clip-path: polygon(
+      0 10px,
+      10px 0,
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      10px 100%,
+      0 calc(100% - 10px)
+    );
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Responsive Design - Enhanced */
+  @media (max-width: 1200px) {
+    .container {
+      max-width: 95%;
+      padding: 10px;
+    }
+  
+    .graphs-container {
+      gap: 20px;
+    }
+  
+    .graph {
+      min-height: 400px;
+      padding: 20px;
+    }
+  
+    .welcome-message {
+      font-size: 2em;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 5px;
+    }
+  
+    .graphs-container {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+  
+    .graph {
+      min-height: 350px;
+      padding: 15px;
+    }
+  
+    .welcome-message {
+      font-size: 1.5em;
+    }
+  
+    .stats-card {
+      padding: 10px;
+      margin: 8px 0;
+    }
+  
+    input,
+    button {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .welcome-message {
+      font-size: 1.2em;
+    }
+  
+    .graph {
+      min-height: 300px;
+      padding: 10px;
+    }
+  
+    .stats-card::after {
+      font-size: 14px;
+    }
+  
+    .profile-container {
+      padding: 20px;
+    }
+  
+    input,
+    button {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }

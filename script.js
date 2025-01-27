@@ -57,41 +57,53 @@ const API_URL =
     
         const query = `
             query {
-                user {
-                    id
-                    login
-                    firstName
-                    lastName
-                    totalUp
-                    totalDown
-                    auditRatio
-                    progresses(order_by: {updatedAt: desc}) {
-                        path
-                        createdAt
-                        grade
-                        group {
-                            captainLogin
-                            auditors {
-                                auditorLogin
-                            }
+              user {
+                id
+                login
+                firstName
+                lastName
+                totalUp
+                totalDown
+                auditRatio
+                progresses(order_by: {updatedAt: desc}) {
+                    path
+                    createdAt
+                    grade
+                    group {
+                        captainLogin
+                        auditors {
+                            auditorLogin
                         }
                     }
-                    transactions(where: {type: {_eq: "xp"}, eventId: {_is_null: false}}, order_by: {createdAt: asc}) {
-                        amount
-                        createdAt
-                        path
+                }
+                audits {
+                    group {
+                        captainLogin
+                        auditors {
+                            endAt
+                        }
                     }
-                    skills: transactions(where: {type: {_like: "%skill_%"}}, order_by: {id: asc}) {
-                        amount
-                        type
-                    }
+                    grade
+                }
+                transactions(where: {type: {_eq: "xp"}, eventId: {_is_null: false}}, order_by: {createdAt: asc}) {
+                    amount
+                    createdAt
+                    path
+                }
+                skills: transactions(where: {type: {_like: "%skill_%"}}, order_by: {id: asc}) {
+                    amount
+                    type
                 }
             }
+        }
         `;
     
         try {
             const data = await fetchGraphQLData(query);
             const user = data.data.user[0];
+    
+            // Calculate audit ratio
+            const auditRatio = user.totalUp / user.totalDown || 0;
     
             // Display basic info
             document.getElementById('basicInfo').innerHTML = `
@@ -101,9 +113,13 @@ const API_URL =
                         <td><strong>ID:</strong></td>
                         <td>${user.id}</td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td><strong>Audit Ratio:</strong></td>
-                        <td>${user.auditRatio}</td>
+                        <td>
+                            <div class="audit-ratio-container">
+                                <span class="audit-ratio-text">${auditRatio.toFixed(1)}</span>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Full Name:</strong></td>
@@ -128,6 +144,7 @@ const API_URL =
                     <p>Total XP: ${user.totalUp / 1000} XP</p>
                 </table>
             `;
+    
             // Draw graphs
             drawXPGraph(user.transactions);
             drawAuditPieChart(user.totalUp, user.totalDown);
@@ -566,3 +583,56 @@ const API_URL =
         progressTableContainer.innerHTML = ''; // Clear previous content
         progressTableContainer.appendChild(table);
     }
+
+    function displayProgressTable(progresses) {
+      const table = document.createElement('table');
+      table.className = 'progress-table';
+  
+      // Create table header
+      const headerRow = document.createElement('tr');
+      const headers = ['Path', 'Created At', 'Grade', 'Captain', 'Auditors'];
+      headers.forEach(headerText => {
+          const th = document.createElement('th');
+          th.textContent = headerText;
+          headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+  
+      // Populate table rows
+      progresses.forEach(progress => {
+          const row = document.createElement('tr');
+  
+          // Path
+          const pathCell = document.createElement('td');
+          pathCell.textContent = progress.path;
+          row.appendChild(pathCell);
+  
+          // Created At
+          const createdAtCell = document.createElement('td');
+          createdAtCell.textContent = new Date(progress.createdAt).toLocaleString();
+          row.appendChild(createdAtCell);
+  
+          // Grade
+          const gradeCell = document.createElement('td');
+          gradeCell.textContent = progress.grade ;
+          row.appendChild(gradeCell);
+  
+          // Captain
+          const captainCell = document.createElement('td');
+          captainCell.textContent = progress.group?.captainLogin ;
+          row.appendChild(captainCell);
+  
+          // Auditors
+          const auditorsCell = document.createElement('td');
+          const auditors = progress.group?.auditors?.map(a => a.auditorLogin).join(', ');
+          auditorsCell.textContent = auditors;
+          row.appendChild(auditorsCell);
+  
+          table.appendChild(row);
+      });
+  
+      // Append the table to the DOM
+      const progressTableContainer = document.getElementById('progressTableContainer');
+      progressTableContainer.innerHTML = ''; // Clear previous content
+      progressTableContainer.appendChild(table);
+  }

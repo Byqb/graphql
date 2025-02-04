@@ -105,6 +105,12 @@ const API_URL =
             // Calculate audit ratio
             const auditRatio = user.totalUp / user.totalDown || 0;
     
+            // Calculate total XP excluding piscine
+            const totalXP = user.transactions
+                .filter(t => t.path.toLowerCase().includes('piscine'))
+                .reduce((sum, t) => sum + t.amount, 0) / 1000;
+    
+
             // Display basic info
             document.getElementById('basicInfo').innerHTML = `
                 <div class="welcome-message">Welcome, ${user.firstName} ${user.lastName}!</div>
@@ -141,7 +147,10 @@ const API_URL =
                                 : 'No projects yet'
                         }</td>
                     </tr>
-                    <p>Total XP: ${user.totalUp / 1000} XP</p>
+                    <tr>
+                        <td><strong>Total XP:</strong></td>
+                        <td>${Math.round(totalXP)} kB</td>
+                    </tr>
                 </table>
             `;
     
@@ -161,283 +170,367 @@ const API_URL =
         const svg = d3.select('#xpGraph');
         svg.selectAll('*').remove();
 
-        const margin = { top: 50, right: 60, bottom: 90, left: 100 };
+        const margin = { top: 50, right: 60, bottom: 120, left: 100 };
         const width = 1000 - margin.left - margin.right;
         const height = 600 - margin.top - margin.bottom;
 
-        svg
-          .attr('viewBox', `0 0 1000 600`)
-          .attr('preserveAspectRatio', 'xMidYMid meet');
+        svg.attr('viewBox', `0 0 1000 600`)
+           .attr('preserveAspectRatio', 'xMidYMid meet');
 
-        const g = svg
-          .append('g')
-          .attr('transform', `translate(${margin.left},${margin.top})`);
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        // Process and sort data
+        // Process and sort data, excluding piscine data
         const data = transactions
-          .map((t) => ({
-            date: new Date(t.createdAt),
-            xp: t.amount / 1000,
-            path: t.path,
-          }))
-          .sort((a, b) => a.date - b.date);
+            .filter(t => !t.path.toLowerCase().includes('piscine')) // Filter out piscine entries
+            .map((t) => ({
+                date: new Date(t.createdAt),
+                xp: t.amount / 1000,
+                path: t.path,
+                totalXp: 0 // Will be calculated below
+            }))
+            .sort((a, b) => a.date - b.date);
 
-        // Create scales with sorted dates
-        const x = d3
-          .scaleTime()
-          .domain(d3.extent(data, (d) => d.date))
-          .range([0, width]);
+        // Calculate cumulative XP
+        let cumulativeXp = 0;
+        data.forEach(d => {
+            cumulativeXp += d.xp;
+            d.totalXp = cumulativeXp;
+        });
 
-        const y = d3
-          .scaleLinear()
-          .domain([0, d3.max(data, (d) => d.xp) * 1.2])
-          .range([height, 0]);
+        // Create scales
+        const x = d3.scaleTime()
+            .domain(d3.extent(data, d => d.date))
+            .range([0, width]);
 
-        // Add gradient definition
-        const gradient = svg
-          .append('defs')
-          .append('linearGradient')
-          .attr('id', 'bar-gradient')
-          .attr('gradientUnits', 'userSpaceOnUse')
-          .attr('x1', '0%')
-          .attr('y1', '0%')
-          .attr('x2', '0%')
-          .attr('y2', '100%');
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.totalXp) * 1.1])
+            .range([height, 0]);
 
-        gradient
-          .append('stop')
-          .attr('offset', '0%')
-          .attr('stop-color', '#64b5f6');
+        // Create gradient for area
+        const areaGradient = svg.append("defs")
+            .append("linearGradient")
+            .attr("id", "areaGradient")
+            .attr("x1", "0%").attr("y1", "0%")
+            .attr("x2", "0%").attr("y2", "100%");
 
-        gradient
-          .append('stop')
-          .attr('offset', '100%')
-          .attr('stop-color', '#1a73e8');
+        areaGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#64b5f6")
+            .attr("stop-opacity", 0.8);
 
-        // Add styled X axis with 4-month intervals
+        areaGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#1a73e8")
+            .attr("stop-opacity", 0.2);
+
+        // Create line generator
+        const line = d3.line()
+            .x(d => x(d.date))
+            .y(d => y(d.totalXp))
+            .curve(d3.curveMonotoneX);
+
+        // Create area generator
+        const area = d3.area()
+            .x(d => x(d.date))
+            .y0(height)
+            .y1(d => y(d.totalXp))
+            .curve(d3.curveMonotoneX);
+
+        // Add grid lines
         g.append('g')
-          .attr('transform', `translate(0,${height})`)
-          .call(
-            d3
-              .axisBottom(x)
-              .tickFormat(d3.timeFormat('%b %Y'))
-              .ticks(d3.timeMonth.every(4))
-          ) // Show every 4 months
-          .selectAll('text')
-          .style('fill', '#ffffff')
-          .style('font-size', '14px')
-          .style('font-weight', 'bold')
-          .attr('transform', 'rotate(-45)')
-          .attr('text-anchor', 'end');
+            .attr('class', 'grid')
+            .attr('opacity', 0.1)
+            .call(d3.axisLeft(y)
+                .tickSize(-width)
+                .tickFormat('')
+            );
 
-        // Add styled Y axis
-        g.append('g')
-          .call(
-            d3
-              .axisLeft(y)
-              .tickFormat((d) => `${Math.round(d)}kB`)
-              .ticks(10)
-          )
-          .selectAll('text')
-          .style('fill', '#ffffff')
-          .style('font-size', '14px')
-          .style('font-weight', 'bold');
+        // Add the area path
+        g.append("path")
+            .datum(data)
+            .attr("class", "area")
+            .attr("d", area)
+            .style("fill", "url(#areaGradient)")
+            .style("filter", "drop-shadow(0px 4px 6px rgba(0,0,0,0.2))");
 
-        // Calculate bar width
-        const barWidth = (width / data.length) * 0.8; // 80% of available space per bar
+        // Add the line path
+        g.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("fill", "none")
+            .attr("stroke", "#64b5f6")
+            .attr("stroke-width", 3)
+            .attr("d", line)
+            .style("filter", "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))");
 
-        // Add bars with enhanced styling
-        const bars = g
-          .selectAll('.bar')
-          .data(data)
-          .enter()
-          .append('rect')
-          .attr('class', 'bar')
-          .attr('x', (d) => x(d.date) - barWidth / 2) // Center the bar on the date
-          .attr('y', (d) => y(d.xp))
-          .attr('width', barWidth)
-          .attr('height', (d) => height - y(d.xp))
-          .attr('fill', 'url(#bar-gradient)')
-          .attr('rx', 12)
-          .attr('ry', 12)
-          .style('filter', 'drop-shadow(0px 4px 6px rgba(0,0,0,0.2))');
+        // Add X axis
+        g.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x)
+                .tickFormat(d3.timeFormat("%b %Y")))
+            .selectAll("text")
+            .style("fill", "#ffffff")
+            .style("font-size", "14px")
+            .attr("transform", "rotate(-45)")
+            .attr("text-anchor", "end");
 
-        // Enhanced hover effect
-        bars
-          .on('mouseover', function (event, d) {
-            d3.select(this)
-              .transition()
-              .duration(300)
-              .attr('fill', '#64b5f6')
-              .style('filter', 'drop-shadow(0px 8px 12px rgba(0,0,0,0.4))')
-              .attr('transform', 'translateY(-5px)');
+        // Add Y axis
+        g.append("g")
+            .call(d3.axisLeft(y)
+                .tickFormat(d => `${Math.round(d)}kB`))
+            .selectAll("text")
+            .style("fill", "#ffffff")
+            .style("font-size", "14px");
 
-            // Enhanced tooltip
-            g.append('text')
-              .attr('class', 'tooltip')
-              .attr('x', x(d.date))
-              .attr('y', y(d.xp) - 20)
-              .attr('text-anchor', 'middle')
-              .style('fill', '#ffffff')
-              .style('font-size', '16px')
-              .style('font-weight', 'bold')
-              .style('text-shadow', '2px 2px 4px rgba(0,0,0,0.3)')
-              .text(`${Math.round(d.xp)}kB - ${d.path}`);
-          })
-          .on('mouseout', function () {
-            d3.select(this)
-              .transition()
-              .duration(300)
-              .attr('fill', 'url(#bar-gradient)')
-              .style('filter', 'drop-shadow(0px 4px 6px rgba(0,0,0,0.2))')
-              .attr('transform', 'translateY(0)');
+        // Style axes
+        g.selectAll(".domain, .tick line")
+            .style("stroke", "#ffffff")
+            .style("opacity", 0.5);
 
-            g.selectAll('.tooltip').remove();
-          });
+        // Create tooltip
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("position", "absolute")
+            .style("background", "rgba(0, 0, 0, 0.8)")
+            .style("color", "#fff")
+            .style("padding", "10px")
+            .style("border-radius", "5px")
+            .style("font-size", "14px")
+            .style("pointer-events", "none")
+            .style("opacity", 0)
+            .style("z-index", 1000);
 
-        // Enhanced axis labels
-        g.append('text')
-          .attr('transform', 'rotate(-90)')
-          .attr('y', 0 - margin.left + 30)
-          .attr('x', 0 - height / 2)
-          .attr('dy', '1em')
-          .style('text-anchor', 'middle')
-          .style('fill', '#ffffff')
-          .style('font-size', '18px')
-          .style('font-weight', 'bold')
-          .text('XP (kB)');
+        // Add interactive points
+        const points = g.selectAll(".point")
+            .data(data)
+            .enter().append("circle")
+            .attr("class", "point")
+            .attr("cx", d => x(d.date))
+            .attr("cy", d => y(d.totalXp))
+            .attr("r", 6)
+            .attr("fill", "#ffffff")
+            .attr("stroke", "#64b5f6")
+            .attr("stroke-width", 2)
+            .style("cursor", "pointer")
+            .style("filter", "drop-shadow(0px 2px 4px rgba(0,0,0,0.3))")
+            .on("mouseover", function(event, d) {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr("r", 8)
+                    .attr("fill", "#64b5f6");
 
-        // Add X axis label
-        g.append('text')
-          .attr('x', width / 2)
-          .attr('y', height + margin.bottom - 20)
-          .style('text-anchor', 'middle')
-          .style('fill', '#ffffff')
-          .style('font-size', '18px')
-          .style('font-weight', 'bold')
-          .text('Date');
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 1);
 
-        // Style axis lines
-        svg
-          .selectAll('.domain, .tick line')
-          .style('stroke', '#ffffff')
-          .style('stroke-width', '2px');
+                tooltip.html(`
+                    <strong>Project:</strong> ${d.path}<br/>
+                    <strong>XP Gained:</strong> ${Math.round(d.xp)}kB<br/>
+                    <strong>Total XP:</strong> ${Math.round(d.totalXp)}kB<br/>
+                    <strong>Date:</strong> ${d3.timeFormat("%B %d, %Y")(d.date)}
+                `)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr("r", 6)
+                    .attr("fill", "#ffffff");
 
-        // Add subtle grid lines
-        g.selectAll('g.y-axis g.tick')
-          .append('line')
-          .attr('class', 'grid-line')
-          .attr('x2', width)
-          .style('stroke', 'rgba(255, 255, 255, 0.1)')
-          .style('stroke-width', '1px');
-      }
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        // Add title
+        svg.append("text")
+            .attr("x", width / 2 + margin.left)
+            .attr("y", 30)
+            .attr("text-anchor", "middle")
+            .style("fill", "#ffffff")
+            .style("font-size", "24px")
+            .style("font-weight", "bold")
+
+        // Add axis labels
+        g.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin.left + 30)
+            .attr("x", -height / 2)
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .style("fill", "#ffffff")
+            .style("font-size", "18px")
+            .text("Total XP (kB)");
+
+        g.append("text")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 30)
+            .style("text-anchor", "middle")
+            .style("fill", "#ffffff")
+            .style("font-size", "18px")
+            .text("Date");
+    }
 
       function drawAuditPieChart(up, down) {
         const svg = d3.select('#auditGraph');
         svg.selectAll('*').remove();
 
         // Update SVG viewBox for better scaling
-        svg
-          .attr('viewBox', `0 0 500 400`)
-          .attr('preserveAspectRatio', 'xMidYMid meet');
+        svg.attr('viewBox', `0 0 500 400`)
+           .attr('preserveAspectRatio', 'xMidYMid meet');
 
         const width = 500;
         const height = 400;
-        const radius = Math.min(width, height) / 2.5;
+        const radius = Math.min(width, height) / 3; // Slightly smaller radius
+        const centerX = width / 2;
+        const centerY = height / 2;
 
+        // Calculate ratios
         const total = up + down;
         const upRatio = up / total;
         const downRatio = down / total;
 
-        const centerX = width / 2;
-        const centerY = height / 2;
+        // Create arc generator
+        const arc = d3.arc()
+            .innerRadius(radius * 0.6) // Create donut chart effect
+            .outerRadius(radius);
 
-        // Convert ratio to angles
-        const upAngle = upRatio * 360;
-        const downAngle = downRatio * 360;
+        // Create pie generator
+        const pie = d3.pie()
+            .value(d => d.value)
+            .sort(null);
 
-        // Create pie slices
-        const createSlice = (startAngle, endAngle, color) => {
-          const start = polarToCartesian(centerX, centerY, radius, startAngle);
-          const end = polarToCartesian(centerX, centerY, radius, endAngle);
-          const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
+        // Prepare data
+        const data = [
+            { type: 'up', value: up },
+            { type: 'down', value: down }
+        ];
 
-          const path = [
-            'M',
-            centerX,
-            centerY,
-            'L',
-            start.x,
-            start.y,
-            'A',
-            radius,
-            radius,
-            0,
-            largeArcFlag,
-            1,
-            end.x,
-            end.y,
-            'Z',
-          ].join(' ');
+        // Create gradient definitions
+        const defs = svg.append('defs');
 
-          const slice = document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'path'
-          );
-          slice.setAttribute('d', path);
-          slice.setAttribute('fill', color);
-          return slice;
-        };
+        // Gradient for up slice
+        const gradientUp = defs.append('linearGradient')
+            .attr('id', 'gradientUp')
+            .attr('x1', '0%')
+            .attr('y1', '0%')
+            .attr('x2', '0%')
+            .attr('y2', '100%');
 
-        svg.node().appendChild(createSlice(0, upAngle, '#4CAF50'));
-        svg.node().appendChild(createSlice(upAngle, 360, '#F44336'));
+        gradientUp.append('stop')
+            .attr('offset', '0%')
+            .attr('stop-color', '#4CAF50')
+            .attr('stop-opacity', 0.8);
+
+        gradientUp.append('stop')
+            .attr('offset', '100%')
+            .attr('stop-color', '#45a049')
+            .attr('stop-opacity', 1);
+
+        // Gradient for down slice
+        const gradientDown = defs.append('linearGradient')
+            .attr('id', 'gradientDown')
+            .attr('x1', '0%')
+            .attr('y1', '0%')
+            .attr('x2', '0%')
+            .attr('y2', '100%');
+
+        gradientDown.append('stop')
+            .attr('offset', '0%')
+            .attr('stop-color', '#F44336')
+            .attr('stop-opacity', 0.8);
+
+        gradientDown.append('stop')
+            .attr('offset', '100%')
+            .attr('stop-color', '#e53935')
+            .attr('stop-opacity', 1);
+
+        // Create group element for the chart
+        const g = svg.append('g')
+            .attr('transform', `translate(${centerX},${centerY})`);
+
+        // Add slices
+        const slices = g.selectAll('path')
+            .data(pie(data))
+            .enter()
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', d => d.data.type === 'up' ? 'url(#gradientUp)' : 'url(#gradientDown)')
+            .style('filter', 'drop-shadow(0px 3px 3px rgba(0,0,0,0.2))')
+            .style('transition', 'all 0.3s ease')
+            .on('mouseover', function() {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('transform', function(d) {
+                        const [x, y] = arc.centroid(d);
+                        return `translate(${x * 0.1},${y * 0.1})`;
+                    });
+            })
+            .on('mouseout', function() {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('transform', 'translate(0,0)');
+            });
+
+        // Add percentage labels
+        g.selectAll('text')
+            .data(pie(data))
+            .enter()
+            .append('text')
+            .attr('transform', d => `translate(${arc.centroid(d)})`)
+            .attr('dy', '.35em')
+            .style('text-anchor', 'middle')
+            .style('fill', '#ffffff')
+            .style('font-size', '16px')
+            .style('font-weight', 'bold')
+            .style('text-shadow', '1px 1px 2px rgba(0,0,0,0.5)')
+            .text(d => `${Math.round(d.data.value / total * 100)}%`);
+
+        // Add title
+        svg.append('text')
+            .attr('x', centerX)
+            .attr('y', 40)
+            .attr('text-anchor', 'middle')
+            .style('fill', '#ffffff')
+            .style('font-size', '20px')
+            .style('font-weight', 'bold')
+            .text('Audit Ratio Distribution');
 
         // Add legend
-        addLegendItem(
-          svg,
-          350,
-          120,
-          '#4CAF50',
-          `Up (${Math.round(upRatio * 100)}%)`
-        );
-        addLegendItem(
-          svg,
-          350,
-          150,
-          '#F44336',
-          `Down (${Math.round(downRatio * 100)}%)`
-        );
-      }
+        const legend = svg.append('g')
+            .attr('transform', `translate(${width - 120}, ${height - 100})`);
 
-      function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-        const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-        return {
-          x: centerX + radius * Math.cos(angleInRadians),
-          y: centerY + radius * Math.sin(angleInRadians),
-        };
-      }
+        // Up legend
+        const upLegend = legend.append('g');
+        upLegend.append('rect')
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('fill', 'url(#gradientUp)');
+        upLegend.append('text')
+            .attr('x', 30)
+            .attr('y', 15)
+            .style('fill', '#ffffff')
+            .text(`Up (${Math.round(upRatio * 100)}%)`);
 
-      function addLegendItem(svg, x, y, color, text) {
-        const rect = document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'rect'
-        );
-        rect.setAttribute('x', x);
-        rect.setAttribute('y', y - 10);
-        rect.setAttribute('width', 20);
-        rect.setAttribute('height', 20);
-        rect.setAttribute('fill', color);
-        svg.node().appendChild(rect);
-
-        const label = document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'text'
-        );
-        label.setAttribute('x', x + 30);
-        label.setAttribute('y', y + 5);
-        label.textContent = text;
-        svg.node().appendChild(label);
-      }
+        // Down legend
+        const downLegend = legend.append('g')
+            .attr('transform', 'translate(0, 30)');
+        downLegend.append('rect')
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('fill', 'url(#gradientDown)');
+        downLegend.append('text')
+            .attr('x', 30)
+            .attr('y', 15)
+            .style('fill', '#ffffff')
+            .text(`Down (${Math.round(downRatio * 100)}%)`);
+    }
 
       function drawSkillsGraph(skills) {
         const svg = d3.select('#skillsGraph');

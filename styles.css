@@ -106,10 +106,10 @@ button:hover {
 /* Profile Container Styling */
 .profile-container {
     display: none;
-    background: var(--card-background);
+    background: rgba(0, 0, 0, 0.177);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) ;
     backdrop-filter: blur(10px);
     position: relative;
 }
@@ -453,4 +453,229 @@ button:hover {
 
 .progress-table-container::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5); /* Thumb color on hover */
+}
+
+/* Skills Table Container */
+#skillsContainer {
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 1000px;
+    width: 90%;
+    overflow-x: auto;
+}
+
+#skillsContainer h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+/* Skills Table specific styles */
+.skills-table th:nth-child(1),
+.skills-table td:nth-child(1) { width: 30%; } /* Skill name */
+.skills-table th:nth-child(2),
+.skills-table td:nth-child(2) { width: 20%; } /* Level */
+.skills-table th:nth-child(3),
+.skills-table td:nth-child(3) { width: 50%; } /* Progress bar */
+
+/* Progress Bar styles */
+.progress-bar-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 3px;
+    position: relative;
+    height: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    border-radius: 8px;
+    transition: width 0.5s ease-in-out;
+    position: absolute;
+    left: 0;
+}
+
+.progress-text {
+    position: relative;
+    z-index: 1;
+    color: var(--text-color);
+    margin-left: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover effects */
+.skills-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.skills-table tbody tr:hover .progress-bar {
+    filter: brightness(1.2);
+}
+
+/* Basic Info Container */
+#basicInfo {
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 1000px;
+    width: 90%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Cyberpunk corner decorations */
+#basicInfo::before,
+#basicInfo::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--secondary-color);
+    opacity: 0.5;
+}
+
+#basicInfo::before {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+}
+
+#basicInfo::after {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+}
+
+/* User Info Table */
+.user-info-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 20px;
+}
+
+.user-info-table tr {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.user-info-table tr:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.user-info-table td {
+    padding: 15px;
+    color: var(--text-color);
+    position: relative;
+}
+
+.user-info-table td:first-child {
+    width: 30%;
+    font-weight: bold;
+    color: var(--secondary-color);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.user-info-table td:last-child {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glowing effect on hover */
+.user-info-table tr:hover td:last-child::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    animation: shine 1.5s infinite;
+}
+
+
+
+/* Audit Ratio Container */
+.audit-ratio-container {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 1px solid var(--secondary-color);
+}
+
+.audit-ratio-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* Animations */
+@keyframes shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(255, 204, 0, 0.8),
+                     0 0 30px rgba(255, 204, 0, 0.6),
+                     0 0 40px rgba(255, 204, 0, 0.4);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #basicInfo {
+        padding: 20px;
+    }
+
+    .welcome-message {
+        font-size: 1.5em;
+    }
+
+    .user-info-table td {
+        padding: 10px;
+    }
+
+    .user-info-table td:first-child {
+        width: 40%;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-message {
+        font-size: 1.2em;
+    }
+
+    .user-info-table {
+        font-size: 0.9em;
+    }
 }

@@ -105,12 +105,9 @@ const API_URL =
             // Calculate audit ratio
             const auditRatio = user.totalUp / user.totalDown || 0;
     
-            // Calculate total XP excluding piscine
-            const totalXP = user.transactions
-                .filter(t => t.path.toLowerCase().includes('piscine'))
-                .reduce((sum, t) => sum + t.amount, 0) / 1000;
+            // Calculate total XP using totalUp - totalDown
+            const totalXP = (user.totalUp - user.totalDown) / 1000;
     
-
             // Display basic info
             document.getElementById('basicInfo').innerHTML = `
                 <div class="welcome-message">Welcome, ${user.firstName} ${user.lastName}!</div>

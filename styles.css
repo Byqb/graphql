@@ -29,84 +29,181 @@ body {
   
 /* Enhanced Login Form */
 .login-container {
+    background: linear-gradient(135deg, #0a0a0f, #1a1a24);
+    border: 4px solid #00f3ff;
+    outline: 4px solid #000;
+    padding: 30px;
     max-width: 400px;
     margin: 100px auto;
-    padding: 40px;
-    background: var(--card-background);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 3px dashed var(--secondary-color);
+    box-shadow: 
+        0 0 20px rgba(0, 243, 255, 0.2),
+        inset 0 0 40px rgba(0, 243, 255, 0.05),
+        0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    image-rendering: pixelated;
+    animation: pulseContainer 4s ease-in-out infinite;
+}
+  
+/* Cyber corners */
+.login-container::before,
+.login-container::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #00f3ff;
+}
+  
+.login-container::before {
+    top: -4px;
+    left: -4px;
+    border-right: none;
+    border-bottom: none;
+}
+  
+.login-container::after {
+    bottom: -4px;
+    right: -4px;
+    border-left: none;
+    border-top: none;
 }
   
 .login-container h2 {
+    font-family: 'Press Start 2P', monospace;
+    color: #00f3ff;
     text-align: center;
     margin-bottom: 30px;
-    font-size: 2em;
+    text-shadow: 
+        2px 2px #000,
+        0 0 10px rgba(0, 243, 255, 0.5),
+        0 0 20px rgba(0, 243, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
   
-.form-group {
-    margin-bottom: 20px;
-}
-  
-input {
+.login-container input {
     width: 100%;
     padding: 12px;
-    margin-top: 8px;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-  
-input:focus {
+    margin: 8px 0;
+    background: rgba(0, 243, 255, 0.05);
+    border: 2px solid rgba(0, 243, 255, 0.3);
+    color: #00f3ff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8em;
     outline: none;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 10px rgba(26, 115, 232, 0.5);
-    border: 2px dashed var(--secondary-color);
-    transform: scale(1.02);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
 }
   
-button {
+.login-container input:focus {
+    border-color: #00f3ff;
+    box-shadow: 
+        0 0 15px rgba(0, 243, 255, 0.2),
+        inset 0 0 10px rgba(0, 243, 255, 0.1);
+    background: rgba(0, 243, 255, 0.1);
+}
+  
+.login-container button {
     width: 100%;
-    padding: 12px;
-    background: var(--secondary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    background: linear-gradient(145deg, rgba(0, 243, 255, 0.1), rgba(0, 243, 255, 0.2));
+    border: 2px solid #00f3ff;
+    color: #00f3ff;
+    font-family: 'Press Start 2P', monospace;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
-}
-  
-button::after {
-    content: '→';
-    position: absolute;
-    right: -20px;
-    opacity: 0;
     transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
 }
   
-button:hover::after {
-    right: 15px;
-    opacity: 1;
-}
-  
-button:hover {
-    background: #1557b0;
+.login-container button:hover {
+    background: rgba(0, 243, 255, 0.2);
+    box-shadow: 
+        0 0 20px rgba(0, 243, 255, 0.3),
+        inset 0 0 15px rgba(0, 243, 255, 0.2);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(26, 115, 232, 0.4);
+}
+  
+.login-container button:active {
+    transform: translateY(1px);
+    box-shadow: 
+        0 0 10px rgba(0, 243, 255, 0.2),
+        inset 0 0 5px rgba(0, 243, 255, 0.1);
+}
+  
+.error-message {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff2d55;
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 10px;
+    text-shadow: 
+        2px 2px #000,
+        0 0 10px rgba(255, 45, 85, 0.5);
+    animation: glitchText 0.3s infinite;
+}
+  
+/* Animations */
+@keyframes pulseContainer {
+    0%, 100% { 
+        box-shadow: 
+            0 0 20px rgba(0, 243, 255, 0.2),
+            inset 0 0 40px rgba(0, 243, 255, 0.05);
+    }
+    50% { 
+        box-shadow: 
+            0 0 30px rgba(0, 243, 255, 0.3),
+            inset 0 0 50px rgba(0, 243, 255, 0.1);
+    }
+}
+  
+@keyframes glitchText {
+    0% { opacity: 1; transform: translateX(0); }
+    25% { opacity: 0.9; transform: translateX(-1px); }
+    50% { opacity: 1; transform: translateX(0); }
+    75% { opacity: 0.9; transform: translateX(1px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+  
+/* Placeholder styling */
+.login-container input::placeholder {
+    color: rgba(0, 243, 255, 0.3);
+}
+  
+/* Scanner line effect */
+.login-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(0, 243, 255, 0.5);
+    animation: scanline 2s linear infinite;
+    pointer-events: none;
+}
+  
+@keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+}
+  
+/* Grid background */
+.login-container {
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: center center;
 }
   
 /* Profile Container Styling */
 .profile-container {
     display: none;
-    background: rgba(0, 0, 0, 0.177);
+    background: rgba(0, 0, 0, 0.336);
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) ;
@@ -612,8 +709,6 @@ button:hover {
     animation: shine 1.5s infinite;
 }
 
-
-
 /* Audit Ratio Container */
 .audit-ratio-container {
     display: inline-flex;
@@ -677,5 +772,113 @@ button:hover {
 
     .user-info-table {
         font-size: 0.9em;
+    }
+}
+
+.quote-container {
+    background-color: #000;
+    border: 4px solid #fff;
+    padding: 20px;
+    margin: 25px 0;
+    position: relative;
+    image-rendering: pixelated;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.quote-container::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: linear-gradient(45deg, 
+        #ff0 0%, #ff0 2%, transparent 2%,
+        transparent 98%, #ff0 98%, #ff0 100%);
+    pointer-events: none;
+}
+
+.quote-text {
+    font-family: 'Press Start 2P', monospace;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px #000;
+    animation: typewriter 3s steps(40) 1;
+}
+
+.quote-author {
+    font-family: 'Press Start 2P', monospace;
+    color: #ff0;
+    font-size: 12px;
+    text-align: right;
+    padding-top: 10px;
+    border-top: 2px dashed #fff;
+}
+
+/* Pixel corner decorations */
+.quote-container::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ff0;
+    bottom: -6px;
+    right: -6px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+/* Blinking cursor effect */
+.quote-text::after {
+    content: '▋';
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Add this to your HTML head section to import the pixel font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.quote-timer {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7em;
+    color: #00ff00;
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 2px dashed rgba(0, 255, 0, 0.3);
+    text-shadow: 2px 2px #003300;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Glossy reflection animation */
+@keyframes glossyShine {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 200% 0;
     }
 }

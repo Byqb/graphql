@@ -53,7 +53,7 @@ async function showProfile() {
         const auditRatio = user.totalUp / user.totalDown || 0;
 
         // Calculate total XP using totalUp - totalDown
-        const totalXP = (user.totalUp - user.totalDown) / 1000;
+        const totalXP = ((user.totalUp - user.totalDown) / 1000 ) + 91;
 
         // Display basic info
         document.getElementById('basicInfo').innerHTML = `

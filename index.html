@@ -1,67 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Student Profile</title>
-    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="css/progress.css"/>
+    <link rel="stylesheet" href="css/quote.css"/>
+    <link rel="stylesheet" href="css/userinfo.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <!-- Login Form -->
-      <div id="loginContainer" class="login-container">
-        <h2>Login</h2>
-        <div class="form-group">
-          <input type="text" id="username" placeholder="Username or Email"/>
+        <!-- Login Form -->
+        <div id="loginContainer" class="login-container">
+            <h2>Login</h2>
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username or Email"/>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" />
+            </div>
+            <button onclick="login()">Login</button>
+            <div id="loginError" class="error"></div>
         </div>
-        <div class="form-group">
-          <input type="password" id="password" placeholder="Password" />
+
+        <!-- Profile Section -->
+        <div id="profileContainer" class="profile-container">
+            <button onclick="logout()" style="width: auto; float: right">Logout</button>
+            <h1>Student Profile</h1>
+
+            <!-- Quote Section -->
+            <div id="quoteContainer" class="quote-container">
+                <p id="quote" class="quote-text"></p>
+                <p id="author" class="quote-author"></p>
+            </div>
+
+            <!-- Graphs Section -->
+            <div class="graphs-container">
+                <div id="basicInfo"></div>
+                <div class="graph">
+                    <h3>XP Progress Over Time</h3>
+                    <svg id="xpGraph" width="100%" height="500"></svg>
+                </div>
+                <div class="graph">
+                    <h3>Audit Ratio</h3>
+                    <svg id="auditGraph" width="100%" height="400"></svg>
+                </div>
+                <div class="graph">
+                    <h3>Skills</h3>
+                    <svg id="skillsGraph" width="100%" height="400"></svg>
+                </div>
+            </div>
+
+            <!-- Progress Table -->
+            <div class="progress-table-container">
+                <h3>Progress</h3>
+                <div id="progressTableContainer"></div>
+            </div>
         </div>
-        <button onclick="login()">Login</button>
-        <div id="loginError" class="error"></div>
-      </div>
-      <!-- Profile Section -->
-      <div id="profileContainer" class="profile-container">
-        <button onclick="logout()" style="width: auto; float: right">
-          Logout
-        </button>
-        <h1>Student Profile</h1>
-        <!-- Add Quote Container -->
-        <div id="quoteContainer" class="quote-container">
-          <p id="quote" class="quote-text"></p>
-          <p id="author" class="quote-author"></p>
-        </div>
-        <div class="graphs-container">
-          <div id="basicInfo"></div>
-           <div class="graph">
-              <h3>XP Progress Over Time</h3>
-              <svg id="xpGraph" width="100%" height="500"></svg>
-          </div>
-          <div class="graph">
-              <h3>Audit Ratio</h3>
-              <svg id="auditGraph" width="100%" height="400"></svg>
-          </div>
-          <div class="graph">
-              <h3>Skills</h3>
-              <svg id="skillsGraph" width="100%" height="400"></svg>
-          </div>
-          <!-- progress-table-container -->
-          <!-- <div class="progress-table-container"> -->
-          <!-- <h3>Progress</h3> -->
-          <!-- <div id="progressTableContainer"></div> -->
-          <!-- </div>  -->
-        
-      </div>
-      <div class="progress-table-container">
-        <h3>Progress</h3>
-        <div id="progressTableContainer"></div>
     </div>
-      </div>
-    </div>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/graphs.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/profile.js"></script>
-  </body>
+    <script src="js/quote.js"></script>
+    <script src="graph/xp.js"></script>
+    <script src="graph/audit.js"></script>
+    <script src="graph/skills.js"></script>
+    <script src="graph/progres.js"></script>
+</body>
 </html>

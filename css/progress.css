@@ -1,0 +1,90 @@
+/* Progress Table Container */
+.progress-table-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05); /* Semi-transparent white background */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    backdrop-filter: blur(10px); /* Blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Light border */
+    max-height: 600px; /* Adjust height as needed */
+    overflow-y: auto; /* Add vertical scrollbar */
+}
+
+/* Progress Table */
+.progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-color); /* Use the text color from your theme */
+}
+
+/* Table Header */
+.progress-table th {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent header background */
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2); /* Light border for header */
+}
+
+/* Table Rows */
+.progress-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Light border for rows */
+}
+
+/* Hover Effect for Rows */
+.progress-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05); /* Light hover effect */
+}
+
+/* Scrollbar Styling */
+.progress-table-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.progress-table-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1); /* Track color */
+    border-radius: 4px;
+}
+
+.progress-table-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3); /* Thumb color */
+    border-radius: 4px;
+}
+
+.progress-table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5); /* Thumb color on hover */
+}
+
+/* Progress Bar styles */
+.progress-bar-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 3px;
+    position: relative;
+    height: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    border-radius: 8px;
+    transition: width 0.5s ease-in-out;
+    position: absolute;
+    left: 0;
+}
+
+.progress-text {
+    position: relative;
+    z-index: 1;
+    color: var(--text-color);
+    margin-left: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}

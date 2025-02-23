@@ -1,0 +1,50 @@
+/* User information table layout */
+.user-info-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 20px;
+}
+
+/* Row hover effects */
+.user-info-table tr {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.user-info-table tr:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.user-info-table td {
+    padding: 15px;
+    color: var(--text-color);
+    position: relative;
+}
+
+.user-info-table td:first-child {
+    width: 30%;
+    font-weight: bold;
+    color: var(--secondary-color);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.user-info-table td:last-child {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glowing effect on hover */
+.user-info-table tr:hover td:last-child::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    animation: shine 1.5s infinite;
+}

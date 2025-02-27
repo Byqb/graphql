@@ -415,84 +415,139 @@ body {
     transform: translateY(-5px);
 }
   
-/* Responsive Design - Enhanced */
+/* Responsive Design Improvements */
 @media (max-width: 1200px) {
     .container {
-        max-width: 95%;
-        padding: 10px;
+        padding: 15px;
+        width: 100%;
     }
-  
+
     .graphs-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
     }
-  
-    .graph {
-        min-height: 400px;
-        padding: 20px;
-    }
-  
-    .welcome-message {
-        font-size: 2em;
+
+    .profile-container {
+        width: 95%;
+        padding: 25px;
     }
 }
-  
+
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .login-container {
+        width: 90%;
+        max-width: none;
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .profile-container {
+        padding: 15px;
+    }
+
+    .graph {
+        min-height: 300px;
+    }
+
+    #basicInfo {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    .quote-container {
+        padding: 15px;
+    }
+
+    .quote-text {
+        font-size: 12px;
+    }
+
+    .quote-author {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container h2 {
+        font-size: 1.2em;
+    }
+
+    .form-group input {
+        padding: 10px;
+        font-size: 0.7em;
+    }
+
+    button {
+        padding: 12px;
+        font-size: 0.7em;
+    }
+
+    .graph h3 {
+        font-size: 0.9em;
+    }
+
+    .progress-table-container {
+        margin: 10px 0;
+        padding: 10px;
+    }
+
+    .progress-table td, 
+    .progress-table th {
+        padding: 8px;
+        font-size: 0.7em;
+    }
+
+    .user-info-table td {
+        padding: 8px;
+        font-size: 0.7em;
+    }
+}
+
+/* Mobile-first improvements */
+@media (max-width: 360px) {
     .container {
         padding: 5px;
     }
-  
-    .graphs-container {
-        grid-template-columns: 1fr;
-        gap: 15px;
+
+    .profile-container {
+        padding: 10px;
     }
-  
+
+    .graph {
+        min-height: 250px;
+        margin-bottom: 15px;
+    }
+}
+
+/* Tablet-specific improvements */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .graphs-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .graph {
         min-height: 350px;
-        padding: 15px;
-    }
-  
-    .welcome-message {
-        font-size: 1.5em;
-    }
-  
-    .stats-card {
-        padding: 10px;
-        margin: 8px 0;
-    }
-  
-    input,
-    button {
-        padding: 10px;
-        font-size: 14px;
     }
 }
-  
-@media (max-width: 480px) {
-    .welcome-message {
-        font-size: 1.2em;
+
+/* Landscape mode improvements */
+@media (max-height: 600px) and (orientation: landscape) {
+    .container {
+        padding: 10px;
     }
-  
+
+    .login-container {
+        margin: 10px auto;
+    }
+
     .graph {
-        min-height: 300px;
-        padding: 10px;
-    }
-  
-    .stats-card::after {
-        font-size: 14px;
-    }
-  
-    .profile-container {
-        padding: 20px;
-    }
-  
-    input,
-    button {
-        padding: 8px;
-        font-size: 12px;
+        min-height: 250px;
     }
 }
-
-
 
 /* Skills Table Container */
 #skillsContainer {
@@ -639,4 +694,5 @@ body {
         font-size: 0.9em;
     }
 }
+
 

@@ -107,3 +107,38 @@
         background-position: 200% 0;
     }
 }
+
+/* Responsive Quote Container */
+@media (max-width: 768px) {
+    .quote-container {
+        margin: 15px 0;
+        padding: 15px;
+    }
+
+    .quote-text {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .quote-author {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quote-container {
+        margin: 10px 0;
+        padding: 10px;
+        border-width: 2px;
+    }
+
+    .quote-text {
+        font-size: 10px;
+        margin-bottom: 15px;
+    }
+
+    .quote-author {
+        font-size: 8px;
+        padding-top: 8px;
+    }
+}

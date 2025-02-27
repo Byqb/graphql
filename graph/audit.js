@@ -5,155 +5,83 @@ function drawAuditPieChart(up, down) {
     svg.selectAll('*').remove();
 
     // Set up chart dimensions
-    const width = 500;
-    const height = 400;
-    const radius = Math.min(width, height) / 3;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    const width = 400;
+    const height = 200;
+    const barHeight = 20;
+    const margin = { top: 40, left: 100, right: 100, bottom: 40 };
 
-    // Calculate audit ratios
-    const total = up + down;
-    const upRatio = up / total;
-    const downRatio = down / total;
-
-    // Create arc generator for pie segments
-    const arc = d3.arc()
-        .innerRadius(radius * 0.6) // Create donut chart effect
-        .outerRadius(radius);
-
-    // Create pie layout generator
-    const pie = d3.pie()
-        .value(d => d.value)
-        .sort(null);
-
-    // Prepare data for pie chart
-    const data = [
-        { type: 'up', value: up },
-        { type: 'down', value: down }
-    ];
-
-    // Update SVG viewBox for better scaling
-    svg.attr('viewBox', `0 0 500 400`)
+    // Update SVG viewBox
+    svg.attr('viewBox', `0 0 ${width} ${height}`)
        .attr('preserveAspectRatio', 'xMidYMid meet');
 
-    // Create gradient definitions
-    const defs = svg.append('defs');
+    // Calculate ratio
+    const ratio = (up / down).toFixed(1);
 
-    // Gradient for up slice
-    const gradientUp = defs.append('linearGradient')
-        .attr('id', 'gradientUp')
-        .attr('x1', '0%')
-        .attr('y1', '0%')
-        .attr('x2', '0%')
-        .attr('y2', '100%');
-
-    gradientUp.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', '#4CAF50')
-        .attr('stop-opacity', 0.8);
-
-    gradientUp.append('stop')
-        .attr('offset', '100%')
-        .attr('stop-color', '#45a049')
-        .attr('stop-opacity', 1);
-
-    // Gradient for down slice
-    const gradientDown = defs.append('linearGradient')
-        .attr('id', 'gradientDown')
-        .attr('x1', '0%')
-        .attr('y1', '0%')
-        .attr('x2', '0%')
-        .attr('y2', '100%');
-
-    gradientDown.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', '#F44336')
-        .attr('stop-opacity', 0.8);
-
-    gradientDown.append('stop')
-        .attr('offset', '100%')
-        .attr('stop-color', '#e53935')
-        .attr('stop-opacity', 1);
-
-    // Create group element for the chart
+    // Create group for the visualization
     const g = svg.append('g')
-        .attr('transform', `translate(${centerX},${centerY})`);
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-    // Add slices
-    const slices = g.selectAll('path')
-        .data(pie(data))
-        .enter()
-        .append('path')
-        .attr('d', arc)
-        .attr('fill', d => d.data.type === 'up' ? 'url(#gradientUp)' : 'url(#gradientDown)')
-        .style('filter', 'drop-shadow(0px 3px 3px rgba(0,0,0,0.2))')
-        .style('transition', 'all 0.3s ease')
-        .on('mouseover', function() {
-            d3.select(this)
-                .transition()
-                .duration(200)
-                .attr('transform', function(d) {
-                    const [x, y] = arc.centroid(d);
-                    return `translate(${x * 0.1},${y * 0.1})`;
-                });
-        })
-        .on('mouseout', function() {
-            d3.select(this)
-                .transition()
-                .duration(200)
-                .attr('transform', 'translate(0,0)');
-        });
+    // Add "Done" bar
+    g.append('rect')
+        .attr('width', width - margin.left - margin.right)
+        .attr('height', barHeight)
+        .attr('fill', '#4CAF50')
+        .attr('rx', 4);
 
-    // Add percentage labels
-    g.selectAll('text')
-        .data(pie(data))
-        .enter()
-        .append('text')
-        .attr('transform', d => `translate(${arc.centroid(d)})`)
-        .attr('dy', '.35em')
-        .style('text-anchor', 'middle')
+    // Add "Received" bar
+    g.append('rect')
+        .attr('y', barHeight + 20)
+        .attr('width', (width - margin.left - margin.right) * 0.7)
+        .attr('height', barHeight)
+        .attr('fill', '#ffffff')
+        .attr('rx', 4);
+
+    // Add labels
+    g.append('text')
+        .attr('x', -10)
+        .attr('y', barHeight / 2)
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'end')
         .style('fill', '#ffffff')
-        .style('font-size', '16px')
-        .style('font-weight', 'bold')
-        .style('text-shadow', '1px 1px 2px rgba(0,0,0,0.5)')
-        .text(d => `${Math.round(d.data.value / total * 100)}%`);
+        .text('Done');
 
-    // Add title
+    g.append('text')
+        .attr('x', -10)
+        .attr('y', barHeight * 2 + 20)
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'end')
+        .style('fill', '#ffffff')
+        .text('Received');
+
+    // Add values
+    g.append('text')
+        .attr('x', width - margin.left - margin.right + 10)
+        .attr('y', barHeight / 2)
+        .attr('dy', '0.35em')
+        .style('fill', '#ffffff')
+        .text(`${(up / 1000000).toFixed(2)} MB ↑`);
+
+    g.append('text')
+        .attr('x', width - margin.left - margin.right + 10)
+        .attr('y', barHeight * 2 + 20)
+        .attr('dy', '0.35em')
+        .style('fill', '#ffffff')
+        .text(`${(down / 1000000).toFixed(2)} MB ↓`);
+
+    // Add ratio display
     svg.append('text')
-        .attr('x', centerX)
-        .attr('y', 40)
-        .attr('text-anchor', 'middle')
-        .style('fill', '#ffffff')
-        .style('font-size', '20px')
+        .attr('x', 50)
+        .attr('y', height - 20)
+        .style('fill', '#1cd4a5')
+        .style('font-size', '48px')
         .style('font-weight', 'bold')
-        .text('Audit Ratio Distribution');
+        .text(ratio);
 
-    // Add legend
-    const legend = svg.append('g')
-        .attr('transform', `translate(${width - 120}, ${height - 100})`);
-
-    // Up legend
-    const upLegend = legend.append('g');
-    upLegend.append('rect')
-        .attr('width', 20)
-        .attr('height', 20)
-        .attr('fill', 'url(#gradientUp)');
-    upLegend.append('text')
-        .attr('x', 30)
-        .attr('y', 15)
-        .style('fill', '#ffffff')
-        .text(`Up (${Math.round(upRatio * 100)}%)`);
-
-    // Down legend
-    const downLegend = legend.append('g')
-        .attr('transform', 'translate(0, 30)');
-    downLegend.append('rect')
-        .attr('width', 20)
-        .attr('height', 20)
-        .attr('fill', 'url(#gradientDown)');
-    downLegend.append('text')
-        .attr('x', 30)
-        .attr('y', 15)
-        .style('fill', '#ffffff')
-        .text(`Down (${Math.round(downRatio * 100)}%)`);
+    // Add "Almost perfect!" text
+    svg.append('text')
+        .attr('x', 140)
+        .attr('y', height - 10)
+        .style('fill', '#1cd4a5')
+        .style('font-size', '16px')
+        .text('Almost perfect!');
 }

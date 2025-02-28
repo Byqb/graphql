@@ -29,7 +29,7 @@ function drawSkillsGraph(skills) {
 
     const y = d3
         .scaleLinear()
-        .domain([0, d3.max(data, d => d.amount)])
+        .domain([0, 100]) // Fixed domain from 0 to 100%
         .range([height, 0]);
 
     // Add bars
@@ -58,9 +58,11 @@ function drawSkillsGraph(skills) {
         .attr('transform', 'rotate(-45)')
         .attr('text-anchor', 'end');
 
-    // Add Y axis
+    // Add Y axis with percentage format
     g.append('g')
-        .call(d3.axisLeft(y).ticks(10))
+        .call(d3.axisLeft(y)
+            .ticks(10)
+            .tickFormat(d => `${d}%`))
         .selectAll('text')
         .style('fill', '#ffffff')
         .style('font-size', '12px')
@@ -76,7 +78,7 @@ function drawSkillsGraph(skills) {
         .style('fill', '#ffffff')
         .style('font-size', '14px')
         .style('font-weight', 'bold')
-        .text('Amount');
+        .text('Percentage');
 
     // Add X axis label
     g.append('text')

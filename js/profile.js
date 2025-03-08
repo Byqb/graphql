@@ -1,4 +1,3 @@
-// وظيفة لعرض الملف الشخصي
 async function showProfile() {
     // Hide login and show profile container
     document.getElementById('loginContainer').style.display = 'none';
@@ -95,10 +94,7 @@ async function showProfile() {
                     <td><strong>Last Project:</strong></td>
                     <td>${user.progresses[0] ? `${user.progresses[0].path} (${new Date(user.progresses[0].createdAt).toLocaleString()})` : 'No projects yet'}</td>
                 </tr>
-                <tr>
-                    <td><strong>Total XP:</strong></td>
-                    <td>${Math.round(totalXP)} kB</td>
-                </tr>
+       
             </table>
         `;
 

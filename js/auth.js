@@ -20,7 +20,10 @@ window.addEventListener('load', () => {
     if (getSession()) {
         // User is logged in, show their profile/dashboard
         showProfile();
-    } 
+    } else {
+        // No session found, show login form
+        showLoginForm();
+    }
 });
 
 // Handle user login
@@ -52,7 +55,7 @@ async function login() {
 // Handle user logout
 function logout() {
     clearSession();
-    hideProfile();
+    location.reload();
 }
 
 // Utility function to fetch data from GraphQL API

@@ -20,10 +20,7 @@ window.addEventListener('load', () => {
     if (getSession()) {
         // User is logged in, show their profile/dashboard
         showProfile();
-    } else {
-        // No session found, show login form
-        showLoginForm();
-    }
+    } 
 });
 
 // Handle user login

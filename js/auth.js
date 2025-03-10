@@ -8,6 +8,19 @@ if (jwt) {
     showProfile();
 }
 
+// Basic session management
+function setSession(token) {
+    localStorage.setItem('session', token);
+}
+
+function getSession() {
+    return localStorage.getItem('session');
+}
+
+function clearSession() {
+    localStorage.removeItem('session');
+}
+
 // Handle user login
 async function login() {
     const username = document.getElementById('username').value;
@@ -27,8 +40,7 @@ async function login() {
         }
 
         const data = await response.json();
-        jwt = data;
-        localStorage.setItem('jwt', jwt);
+        setSession(data); // Store token in session
         showProfile();
     } catch (error) {
         document.getElementById('loginError').textContent = error.message;
@@ -37,8 +49,13 @@ async function login() {
 
 // Handle user logout
 function logout() {
-    localStorage.removeItem('jwt');
+    clearSession();
     location.reload();
+}
+
+// Check session on page load
+if (getSession()) {
+    showProfile();
 }
 
 // Utility function to fetch data from GraphQL API

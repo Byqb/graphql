@@ -51,12 +51,7 @@ async function showProfile() {
         const data = await fetchGraphQLData(query);
         const user = data.data.user[0];
 
-        // Create basic info container if it doesn't exist
-        if (!document.getElementById('basicInfo')) {
-            const basicInfoDiv = document.createElement('div');
-            basicInfoDiv.id = 'basicInfo';
-            document.querySelector('.profile-container').insertBefore(basicInfoDiv, document.querySelector('.graphs-container'));
-        }
+  
 
         // Calculate audit ratio and total XP
         const auditRatio = user.totalUp / user.totalDown || 0;
